@@ -13,4 +13,7 @@ module.exports=function(app){
     app.get('/transactions/new',(req,res)=>{
         res.render('transaction_new.html');
     })
+    app.post('/transactions/new',(req,res)=>{
+        console.log(req.body);
+    })
 }
