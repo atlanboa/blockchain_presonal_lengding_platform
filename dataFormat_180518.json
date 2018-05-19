@@ -56,6 +56,34 @@ BDS_Data: BDSDataFormat
                 "Nonce" : 0 // this variable has to be deleted later
         }
 }
+
+//Send IP and port
+IAP_Data:
+{
+        Format:'IAP',
+        IP:'192.184.30.22',
+        Port:3929
+}
+
+PID: Peer Ip and Port Data
+{
+        Format:'PID',
+        Array:[], //client 변수
+}
+
+TRD:Transaction Data
+{
+        Format:'TRD',
+        Data:[{
+                Creditor:,
+                Debtor:,
+                Money:,
+        }],
+}
+
+
+
+
 // datenow 형식이 저런데 구체적인 빌린 날짜는 따로 구해서 넣어야되지않겠니
 // 년월일은 요렇게 구하는데 이거 걍 스트링으로 붙이면 될듯? 생각해보져
 // var date = new Date(); 
