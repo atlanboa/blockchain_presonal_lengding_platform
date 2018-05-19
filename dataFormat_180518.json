@@ -53,7 +53,7 @@ BDS_Data: BDSDataFormat
                     "Money" : 50000
                 },
                 "Hash" : "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b982",
-                "Nonce" : 0 // this variable has to be deleted later
+                "Index" : 0 // this variable has to be deleted later
         }
 }
 
