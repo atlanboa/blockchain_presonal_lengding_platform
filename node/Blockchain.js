@@ -2,6 +2,7 @@
  * @author Yeji-Kim
  * @date 2018-05-19
  * @description Blockchain class. usage: var chain=new BlockChain()
+ * @editor Jaden-Kim
  */
 var Block = require('./block.js');
 const SHA256 = require('crypto-js/sha256')
@@ -88,23 +89,6 @@ module.exports=class Blockchain{
         this.pendingTransactions.push(transaction);
     }
 
-    getBalanceOfAddress(address){
-        let balance = 0;
-
-        for(const block of this.chain){
-            for(const trans of block.transactions){
-                if(trans.creditor === address){
-                    balance -= trans.money;
-                }
-
-                if(trans.debtor === address){
-                    balance += trans.money;
-                }
-            }
-        }
-
-        return balance;
-    }
 
     isChainValid() {
         for (let i = 1; i < this.chain.length; i++){
