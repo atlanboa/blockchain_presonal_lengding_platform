@@ -73,7 +73,9 @@ CIQ: Connection Ips Request
         Object:{IP:, Port: ,}, //If Type is Array, Don't use this.
 }
 
-CIS: Connection Ips Response
+CIS: Connection Ips Response 
+//살짝 논외 안쓰일 수도 있겠다.
+//@todo 안쓰이면 삭제해주세요.
 {
         Format:'CIS',
         Status:'Success', //{'Success','Fail'}
