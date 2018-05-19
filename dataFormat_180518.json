@@ -1,0 +1,66 @@
+/*Update (18.05.18) : Blockchain Data format*/
+
+//Current Confirm Request
+CCR_Data: CCRDataFormat
+{
+        "Format": "CCR",
+        "Data": {
+                "Status": "Confirm", // { "Confirm" }
+                "Info": "None" // { "None" }
+        }
+}
+
+//Block Reception Response
+BRR_Data: BRRDataFormat
+{
+        "Format": "BRR",
+        "Data": {
+                "Status": "Success", // { "Success" }
+                "Info": "None" // { "None" }
+        }
+}
+
+//Verifying Block Result
+VBR_Data: VBRDataFormat
+{
+        "Format": "VBR",
+        "Data": {
+                "Status": "Valid", // { "Valid", "Non_valid" }
+                "Info": "None" // { "None" }
+        }
+}
+
+//Block Added Response
+BAR_Data: BARDataFormat
+{
+        "Format": "BAR",
+        "Data": {
+                "Status": "Success", // { "Success" }
+                "Info": "None" // { "None" }
+        }
+}
+
+//Block Data Sending  
+BDS_Data: BDSDataFormat 
+{
+        "Format": "BDS",
+        "Block": {
+                "PreviousHash" : "",
+                "Timestamp": "1526650507582", // date.now  
+                "Transactions": {                    
+                    "Creditor" : "sangheon", //{ "Creditor id" }
+                    "Debtor" : "yeji",//{ "debtor id" }
+                    "Money" : 50000
+                },
+                "Hash" : "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b982",
+                "Nonce" : 0 // this variable has to be deleted later
+        }
+}
+// datenow 형식이 저런데 구체적인 빌린 날짜는 따로 구해서 넣어야되지않겠니
+// 년월일은 요렇게 구하는데 이거 걍 스트링으로 붙이면 될듯? 생각해보져
+// var date = new Date(); 
+// var year = date.getFullYear(); 
+// var month = new String(date.getMonth()+1); 
+// var day = new String(date.getDate()); 
+// chain json은 어떻게 해야 하지?
+// 
