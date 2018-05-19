@@ -56,11 +56,11 @@ BDS_Data: BDSDataFormat
                 "Nonce" : 0 // this variable has to be deleted later
         }
 }
-// datenow Çü½ÄÀÌ Àú·±µ¥ ±¸Ã¼ÀûÀÎ ºô¸° ³¯Â¥´Â µû·Î ±¸ÇØ¼­ ³Ö¾î¾ßµÇÁö¾Ê°Ú´Ï
-// ³â¿ùÀÏÀº ¿ä·¸°Ô ±¸ÇÏ´Âµ¥ ÀÌ°Å °Á ½ºÆ®¸µÀ¸·Î ºÙÀÌ¸é µÉµí? »ı°¢ÇØº¸Á®
+// datenow í˜•ì‹ì´ ì €ëŸ°ë° êµ¬ì²´ì ì¸ ë¹Œë¦° ë‚ ì§œëŠ” ë”°ë¡œ êµ¬í•´ì„œ ë„£ì–´ì•¼ë˜ì§€ì•Šê² ë‹ˆ
+// ë…„ì›”ì¼ì€ ìš”ë ‡ê²Œ êµ¬í•˜ëŠ”ë° ì´ê±° ê± ìŠ¤íŠ¸ë§ìœ¼ë¡œ ë¶™ì´ë©´ ë ë“¯? ìƒê°í•´ë³´ì ¸
 // var date = new Date(); 
 // var year = date.getFullYear(); 
 // var month = new String(date.getMonth()+1); 
 // var day = new String(date.getDate()); 
-// chain jsonÀº ¾î¶»°Ô ÇØ¾ß ÇÏÁö?
+// chain jsonì€ ì–´ë–»ê²Œ í•´ì•¼ í•˜ì§€?
 // 
