@@ -9,9 +9,12 @@ const SHA256 = require('crypto-js/sha256')
 module.exports=class Blockchain{
     constructor() {
         this.chain = [this.createGenesisBlock()];
-        //this.difficulty = 2;
         this.pendingTransactions = [];
+        this.verify = 0;
+        this.block;
+
         //this.miningReward = 100;
+        //this.difficulty = 2;
     }
 
     createGenesisBlock() {
@@ -22,24 +25,64 @@ module.exports=class Blockchain{
         return this.chain[this.chain.length - 1];
     }
 
-    createBlock(){ //When Client needs to create block
+    createBlock(){ //When Client needs to create block and send other peers
         let block = new Block(Date.now(), this.pendingTransactions, this.getLatestBlock().hash);
-        return block;
+        block.increaseIndex();
+        this.block = block;
     }
 
     //서버도 체인을 가진다면..?
+    appendingBlock(){ //When Client makes a decision to add a block to the blockchain
+        this.chain.push(this.block);
+    } 
 
-    minePendingTransactions(miningRewardAddress){
-        let block = new Block(Date.now(), this.pendingTransactions, this.getLatestBlock().hash);
-        //block.mineBlock(this.difficulty);
-
-        console.log('Block successfully created!');
-        this.chain.push(block);
-
-        this.pendingTransactions = [
-        new Transaction(null, miningRewardAddress, this.miningReward)
-        ];
+    verifyBlock(){
+        let previousblock = this.getLatestBlock();
+        if(this.block.hash == previousblock.calculateHash())
+        {
+            return true;
+        }
+        else{
+            return false;
+        }
     }
+    
+    constructTRD(){
+        var TRD = {};
+        TRD.Format = 'TRD';
+        TRD.Data = [];
+        TRD.Data.push(this.pendingTransactions.shift());
+        // for(var i =0; i<5; i++){ //this code for 5 transactions sending
+        //     TRD.Data.push(this.pendingTransactions.shift());
+        // }
+        return TRD;        
+    }
+
+    constructBDS(){
+        var BDS = {};
+        BDS.PreviousHash = this.block.previousHash;
+        BDS.Timestamp=this.block.timestamp;
+        BDS.Transactions={};
+        BDS.Transactions.Creditor = this.block.creditor;
+        BDS.Transactions.Debtor = this.block.debtor;
+        BDS.Transactions.Money = this.block.money;
+        BDS.Hash = this.block.hash;
+        BDS.Index = this.block.index;
+        return BDS;
+    
+    }
+
+    // minePendingTransactions(miningRewardAddress){
+    //     let block = this.createBlock();
+    //     //block.mineBlock(this.difficulty);
+
+    //     console.log('Block successfully created!');
+    //     this.chain.push(block);
+
+    //     this.pendingTransactions = [
+    //     new Transaction(null, miningRewardAddress, this.miningReward)
+    //     ];
+    // }
 
     createTransaction(transaction){
         this.pendingTransactions.push(transaction);
