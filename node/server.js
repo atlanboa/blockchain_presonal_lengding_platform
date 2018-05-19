@@ -6,7 +6,7 @@ var WebSocket = require('ws');
 var wss = new WebSocket.Server({ port:4000 });
 
 /**
- * client=[ { IP:String, Port:Integer }, ]
+ * client=[ { IP:String, Port:Integer, id: ? }, ]
  */
 let client=[]; //save client ip and port
 
@@ -39,18 +39,34 @@ let recv=function(message){
         let PID={};
         PID.Format='PID';
         PID.Array=client;
+        //this.id=uuid.v4();
         ws.send(JSON.stringify(PID));
     }
 
 }
 
+function noop(){}
+function heartbeat(){ this.isAlive=true; }
+
 function connection(ws,req){
-    
+    console.log('Server is opened');
     ws.on('message',recv);
     
-    // 닫혔을 때 client[] 안에 있는거 find ip 찾아서 해당 data remove
+    ws.isAlive=true;
+    ws.on('pong',heartbeat);
 
 }
 
 
 wss.on('connection',connection);
+const interval=setInterval(function ping(){
+    wss.clients.forEach((ws)=>{
+        if(ws.isAlive==false) {
+            // 닫혔을 때 client[] 안에 있는거 find ip 찾아서 해당 data remove, 근데 어떻게 찾는지 모름... ㅠㅠㅠㅠ
+            return ws.terminate();
+        }
+        ws.isAlive=false;
+        ws.ping(noop);
+        
+    });
+},30000);
