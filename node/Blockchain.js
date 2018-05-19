@@ -9,9 +9,9 @@ const SHA256 = require('crypto-js/sha256')
 module.exports=class Blockchain{
     constructor() {
         this.chain = [this.createGenesisBlock()];
-        this.difficulty = 2;
+        //this.difficulty = 2;
         this.pendingTransactions = [];
-        this.miningReward = 100;
+        //this.miningReward = 100;
     }
 
     createGenesisBlock() {
@@ -22,11 +22,18 @@ module.exports=class Blockchain{
         return this.chain[this.chain.length - 1];
     }
 
+    createBlock(){ //When Client needs to create block
+        let block = new Block(Date.now(), this.pendingTransactions, this.getLatestBlock().hash);
+        return block;
+    }
+
+    //서버도 체인을 가진다면..?
+
     minePendingTransactions(miningRewardAddress){
         let block = new Block(Date.now(), this.pendingTransactions, this.getLatestBlock().hash);
-        block.mineBlock(this.difficulty);
+        //block.mineBlock(this.difficulty);
 
-        console.log('Block successfully mined!');
+        console.log('Block successfully created!');
         this.chain.push(block);
 
         this.pendingTransactions = [

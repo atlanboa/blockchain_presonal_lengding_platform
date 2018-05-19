@@ -9,19 +9,20 @@ module.exports=class Block{
         this.timestamp = timestamp;
         this.transactions = transactions;
         this.hash = this.calculateHash();
-        this.nonce = 0;
+        this.index = 0;
+        //this.nonce = 0; //variable nonce is for mining.
     }
 
     calculateHash() {
-        return SHA256(this.previousHash + this.timestamp + JSON.stringify(this.transactions) + this.nonce).toString();
+        return SHA256(this.previousHash + this.timestamp + JSON.stringify(this.transactions) + this.index++).toString();
     }
 
-    mineBlock(difficulty) {
-        while (this.hash.substring(0, difficulty) !== Array(difficulty + 1).join("0")) {
-            this.nonce++;
-            this.hash = this.calculateHash();
-        }
+    // mineBlock(difficulty) {
+    //     while (this.hash.substring(0, difficulty) !== Array(difficulty + 1).join("0")) {
+    //         this.nonce++;
+    //         this.hash = this.calculateHash();
+    //     }
 
-        console.log("BLOCK MINED: " + this.hash);
-    }
+    //     console.log("BLOCK CREATED: " + this.hash);
+    // }
 }
