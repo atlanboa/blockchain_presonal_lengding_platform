@@ -6,7 +6,7 @@ var WebSocket = require('ws');
 var wss = new WebSocket.Server({ port:4000 });
 
 /**
- * client=[ { ip:String, port:Integer }, ]
+ * client=[ { IP:String, Port:Integer }, ]
  */
 let client=[]; //save client ip and port
 
@@ -30,15 +30,22 @@ let recv=function(message){
 
     /** 원하는 결과를 가지고 어떤 메세지를 받았을 때, 어떻게 동작해야 하는지 아래에 기술*/
     
+    var msg=JSON.parse(message);
+    if(msg.Format=='IAP'){
+        //새로운 IP 가 접속했다는 의미
+        client.push({
+            IP:msg.IP, Port:msg.Port
+        });
+        let PID={};
+        PID.Format='PID';
+        PID.Array=client;
+        ws.send(JSON.stringify(PID));
+    }
+
 }
 
 function connection(ws,req){
-    var tdata={
-        ip: req.connection.remoteAddress.slice(7), //
-        port: 4000,
-    }
-    client.push(tdata); //client 가 접속할 때 마다 client.push
-
+    
     ws.on('message',recv);
     
     // 닫혔을 때 client[] 안에 있는거 find ip 찾아서 해당 data remove

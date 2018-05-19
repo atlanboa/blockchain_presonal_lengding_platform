@@ -3,11 +3,13 @@
     @ description: node _ ws client.
 */
 const WEB_SERVER_IP='192.168.0.15';
-const PORT=4000
+const PORT=4000;
+const MYPORT=4000;
+const IP=require('ip').address();
 
 var WebSocket = require('ws');
-var wss=new WebSocket.Server({ port: PORT });
 
+var wss=new WebSocket.Server({ port: MYPORT });
 var ws=new WebSocket('ws://'+WEB_SERVER_IP+':'+PORT.toString());
 
 let client=[]; //save client ip and port
@@ -20,7 +22,10 @@ let recv=function(message){
     //var result=JSON.parse(message) -2
 
     /** 원하는 결과를 가지고 어떤 메세지를 받았을 때, 어떻게 동작해야 하는지 아래에 기술*/
-    
+    var msg=JSON.parse(message);
+    if(msg.Format=='PID'){
+        client=msg.Array.slice();
+    }
 }
 
 
@@ -29,12 +34,16 @@ var connect = function(){
     ws.on('open',function(){
         console.log('Connect with Web_server_wss');
         
+        ws.send(JSON.stringify({
+            IP:IP, Port:MYPORT
+        }));
+        
         //ws.send(type:String);
-
+        
         ws.on('close',()=>{
             /** 서버와 연결이 끊어졌을 때 어떻게 동작해야 하는지 아래에 기술 */
             console.log('connection is close!');
-            
+            //reconnect
         });
 
     });
