@@ -35,7 +35,7 @@ let client=[];
 //client's wss server open.
 wss.on('connection',function(ws,req){
     console.log('25: Someone connect with me.');
-    ws.on('message',served_client);
+    ws.on('message',server_recv);
 });
 
 
@@ -57,11 +57,11 @@ var connect_server = function(){
 
     });
 
-    ws.on('message',server_recv);
+    ws.on('message',webServer_recv);
 }
 
-let server_recv=function(message){
-    console.log('64:server_recv,',message);
+let webServer_recv=function(message){
+    console.log('64:webServer_recv,',message);
     var msg=JSON.parse(message);
 
     if(msg.Format=='CIQ'){
@@ -125,8 +125,8 @@ let client_recv=function(message){ //ws 에 붙어야 함.
 }
 
 
-let served_client=function(message){ //wss에 붙어야 함.
-    console.log('118: served_client,',message);
+let server_recv=function(message){ //wss에 붙어야 함.
+    console.log('118: server_recv,',message);
     // var msg=JSON.parse(message);
     
     // if(msg.Format=='VBR'){
