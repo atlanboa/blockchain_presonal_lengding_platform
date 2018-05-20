@@ -150,9 +150,7 @@ let server_recv=function(message){ //wss에 붙어야 함.
 }
 
 function verifiedResult(){
-    let Boolean = Blockchain.verifyBlock();
-    wss.broadcast(JSON.stringify(Blockchain.makeVBR(Boolean)));
-
+    wss.broadcast(JSON.stringify(Blockchain.makeVBR(Blockchain.verifyBlock())));
 }
 
 function sendBlock(){
