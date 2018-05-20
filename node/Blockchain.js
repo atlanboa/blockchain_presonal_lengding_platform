@@ -5,7 +5,7 @@
  * @editor Jaden-Kim
  */
 var Block = require('./block.js');
-const SHA256 = require('crypto-js/sha256')
+
 
 module.exports = class Blockchain {
     constructor() {
