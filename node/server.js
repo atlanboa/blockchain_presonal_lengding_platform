@@ -4,7 +4,7 @@
 */
 var WebSocket = require('ws');
 //const debug=require('./makedebuglog.js').debug_error();
-
+var BlockChain=require('./Blockchain.js');
 var wss = new WebSocket.Server({ port:8888 });
 
 /**
