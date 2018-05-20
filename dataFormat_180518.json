@@ -73,11 +73,11 @@ CIQ: Connection Ips Request
         Object:{IP:, Port: ,}, //If Type is Array, Don't use this.
 }
 
-CIS: Connection Ips Response
+CIS: Connection Ips Response 
 {
         Format:'CIS',
         Status:'Success', //{'Success','Fail'}
-        Type: 'Array' //{ Array, Object }
+        Type: 'Array' //{ Array, Object,?? }
 }
 
 TRD:Transaction Data
