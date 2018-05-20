@@ -4,6 +4,7 @@
  * 
 */
 var Blockchain = require('./Blockchain.js');
+
 const WEB_SERVER_IP=require('ip').address().toString();
 const PORT=8888;
 const MYPORT=getRandomInt(3000,8500);
@@ -111,6 +112,10 @@ let webServer_recv=function(message){
             this.send(JSON.stringify(CIS));
             
         }
+    }
+    else if(msg.Format=='ACQ'){
+        delete Blockchain;
+        Blockchain = new Blockchain
     }
 
 }
