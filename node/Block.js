@@ -4,6 +4,7 @@
  * @description Block class. usage: let block = new Block(Date.now(), this.pendingTransactions, this.getLatestBlock().hash)
  * @editor Jaden-Kim
  */
+const SHA256 = require('crypto-js/sha256')
 module.exports=class Block{
     constructor(timestamp, transactions, previousHash = '') {
         this.previousHash = previousHash;
