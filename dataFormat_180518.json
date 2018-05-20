@@ -74,12 +74,10 @@ CIQ: Connection Ips Request
 }
 
 CIS: Connection Ips Response 
-//살짝 논외 안쓰일 수도 있겠다.
-//@todo 안쓰이면 삭제해주세요.
 {
         Format:'CIS',
         Status:'Success', //{'Success','Fail'}
-        Type: 'Array' //{ Array, Object }
+        Type: 'Array' //{ Array, Object,?? }
 }
 
 TRD:Transaction Data
