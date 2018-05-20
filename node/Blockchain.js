@@ -47,6 +47,15 @@ module.exports = class Blockchain {
         }
     }
 
+    makeCCR(){
+        var CCR = {};
+        CCR.Format = 'CCR';
+        CCR.Data ={};
+        CCR.Data.Status = 'Confirm';
+        CCR.Data.Info = 'None';
+        return CCR;
+    }
+
     makeBRR(){
         var BRR ={};
         BRR.Format = 'BRR';
@@ -75,6 +84,64 @@ module.exports = class Blockchain {
         return VBR;
     }
 
+    makeBAR(){
+        var BAR ={};
+        BAR.Format = 'BAR';
+        BAR.Data = {};
+        BAR.Data.Status = 'Success';
+        BAR.Data.Info = 'None'
+        return BAR;
+    }
+    makeBDS() {
+        var BDS = {};
+        BDS.Format = 'BDS';
+        BDS.PreviousHash = this.block.previousHash;
+        BDS.Timestamp = this.block.timestamp;
+        BDS.Transactions = {};
+        BDS.Transactions.Creditor = this.block.creditor;
+        BDS.Transactions.Debtor = this.block.debtor;
+        BDS.Transactions.Money = this.block.money;
+        BDS.Hash = this.block.hash;
+        BDS.Index = this.block.index;
+        return BDS;
+
+    }
+
+    makeIAP(ip, port){
+        var IAP = {};
+        IAP.Format = 'IAP';
+        IAP.IP = ip;
+        IAP.Port = port;
+        return IAP;
+    }
+
+    makeCIQ_Array(){
+        var CIQ = {};
+        CIQ.Format ='CIQ';
+        CIQ.Type = 'Array';
+        CIQ.Array = [];
+        CIQ.Array.push(/*something here*/);
+        //잘 모르겠는데 이거 맞나
+        return CIQ;
+    }
+
+    makeCIQ_Object(){
+        var CIQ = {};
+        CIQ.Format ='CIQ';
+        CIQ.Type = 'Object';
+        CIQ.Object = [];
+        CIQ.Object.push(/*something here*/);
+        //이하 동문, 동문? 너 내 친구가 되라
+        return CIQ;
+    }
+
+    makeCIS(){
+        var CIS = {};
+        CIS.Format = 'CIS';
+        CIS.Status = 'Success';
+    }
+
+
 
     makeTRD() {
         var TRD = {};
@@ -87,18 +154,20 @@ module.exports = class Blockchain {
         return TRD;
     }
 
-    makeBDS() {
-        var BDS = {};
-        BDS.PreviousHash = this.block.previousHash;
-        BDS.Timestamp = this.block.timestamp;
-        BDS.Transactions = {};
-        BDS.Transactions.Creditor = this.block.creditor;
-        BDS.Transactions.Debtor = this.block.debtor;
-        BDS.Transactions.Money = this.block.money;
-        BDS.Hash = this.block.hash;
-        BDS.Index = this.block.index;
-        return BDS;
+    makeACQ(){
+        
+    }
 
+    makeACS(boolean){
+        var ACS = {};
+        ACS.Format = 'ACS';
+        if(boolean == true){
+            ACS.Status = 'Succes';
+        }
+        else{
+            ACS.Status = 'Fail';
+        }
+        return ACS;
     }
 
     // minePendingTransactions(miningRewardAddress){
