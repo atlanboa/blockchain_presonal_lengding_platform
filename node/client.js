@@ -3,7 +3,7 @@
  * @description: node _ ws client.
  * 
 */
-
+var Blockchain = require('./Blockchain.js');
 const WEB_SERVER_IP=require('ip').address().toString();
 const PORT=8888;
 const MYPORT=getRandomInt(3000,8500);
@@ -31,6 +31,15 @@ var ws=new WebSocket('ws://'+WEB_SERVER_IP+':'+PORT.toString());
 var node_list=[];
 let client=[];
 
+wss.broadcast = function(data){
+    wss.clients.forEach(function each(client) {
+        if(client.readyState == WebSocket.OPEN) {
+            var BroadData = JSON.stringify(data);
+            client.send(BroadData);
+            console.log('Braodcasting : ' + data);
+        }
+    });
+}
 
 //client's wss server open.
 wss.on('connection',function(ws,req){
@@ -139,6 +148,23 @@ let server_recv=function(message){ //wss에 붙어야 함.
     //     }
     // }
 }
+
+function verifiedResult(){
+    let Boolean = Blockchain.verifyBlock();
+    wss.broadcast(JSON.stringify(Blockchain.makeVBR(Boolean)));
+
+}
+
+function sendBlock(){
+    Blockchain.block = Blockchain.createBlock();
+    wss.broadcast(JSON.stringify(Blockchain.makeBDS()));
+}
+
+function sendBRR(){
+    wss.broadcast(JSON.stringify(Blockchain.makeBRR()));
+}
+
+
 
 /** other function */
 

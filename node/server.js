@@ -22,7 +22,6 @@ wss.broadcast = function(data){
                 console.log('Braodcasting : ' + data);
             }
         });
-
 }
 
 function makeCIQ(type){

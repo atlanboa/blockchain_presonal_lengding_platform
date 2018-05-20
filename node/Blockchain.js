@@ -7,7 +7,7 @@
 var Block = require('./block.js');
 const SHA256 = require('crypto-js/sha256')
 
-module.exports=class Blockchain{
+module.exports = class Blockchain {
     constructor() {
         this.chain = [this.createGenesisBlock()];
         this.pendingTransactions = [];
@@ -26,29 +26,57 @@ module.exports=class Blockchain{
         return this.chain[this.chain.length - 1];
     }
 
-    createBlock(){ //When Client needs to create block and send other peers
+    createBlock() { //When Client needs to create block and send other peers
         let block = new Block(Date.now(), this.pendingTransactions, this.getLatestBlock().hash);
         block.increaseIndex();
         this.block = block;
     }
 
     //서버도 체인을 가진다면..?
-    appendingBlock(){ //When Client makes a decision to add a block to the blockchain
+    appendingBlock() { //When Client makes a decision to add a block to the blockchain
         this.chain.push(this.block);
-    } 
+    }
 
-    verifyBlock(){
+    verifyBlock() {
         let previousblock = this.getLatestBlock();
-        if(this.block.hash == previousblock.calculateHash())
-        {
+        if (this.block.hash == previousblock.calculateHash()) {
             return true;
         }
-        else{
+        else {
             return false;
         }
     }
-    
-    constructTRD(){
+
+    makeBRR(){
+        var BRR ={};
+        BRR.Format = 'BRR';
+        BRR.Data = {};
+        BRR.Data.Status = 'Success';
+        BRR.Data.Info = 'None'
+        return BRR;
+    }
+
+    makeVBR(Boolean) {
+        if (Boolean == true) {
+            var VBR = {};
+            VBR.Format = 'VBR';
+            VBR.Data = {};
+            VBR.Data.Status = 'Valid';
+            VBR.Data.Info = 'None';
+        }
+        else {
+            var VBR = {};
+            VBR.Format = 'VBR';
+            VBR.Data = {};
+            VBR.Data.Status = 'Non_Valid';
+            VBR.Data.Info = 'None';
+        }
+
+        return VBR;
+    }
+
+
+    makeTRD() {
         var TRD = {};
         TRD.Format = 'TRD';
         TRD.Data = [];
@@ -56,21 +84,21 @@ module.exports=class Blockchain{
         // for(var i =0; i<5; i++){ //this code for 5 transactions sending
         //     TRD.Data.push(this.pendingTransactions.shift());
         // }
-        return TRD;        
+        return TRD;
     }
 
-    constructBDS(){
+    makeBDS() {
         var BDS = {};
         BDS.PreviousHash = this.block.previousHash;
-        BDS.Timestamp=this.block.timestamp;
-        BDS.Transactions={};
+        BDS.Timestamp = this.block.timestamp;
+        BDS.Transactions = {};
         BDS.Transactions.Creditor = this.block.creditor;
         BDS.Transactions.Debtor = this.block.debtor;
         BDS.Transactions.Money = this.block.money;
         BDS.Hash = this.block.hash;
         BDS.Index = this.block.index;
         return BDS;
-    
+
     }
 
     // minePendingTransactions(miningRewardAddress){
@@ -85,13 +113,13 @@ module.exports=class Blockchain{
     //     ];
     // }
 
-    createTransaction(transaction){
+    createTransaction(transaction) {
         this.pendingTransactions.push(transaction);
     }
 
 
     isChainValid() {
-        for (let i = 1; i < this.chain.length; i++){
+        for (let i = 1; i < this.chain.length; i++) {
             const currentBlock = this.chain[i];
             const previousBlock = this.chain[i - 1];
 
