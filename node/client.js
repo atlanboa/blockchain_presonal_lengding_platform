@@ -63,7 +63,7 @@ var connect_server = function(){
 let server_recv=function(message){
     console.log('64:server_recv,',message);
     var msg=JSON.parse(message);
-    console.log('66:server_recv,',msg);
+
     if(msg.Format=='CIQ'){
         if(msg.Type=='Array'){
             client=msg.Array.slice();
@@ -82,7 +82,7 @@ let server_recv=function(message){
         }else if(msg.Type=='Object'){
             if(!(msg.Object.IP==IP && msg.Object.Port==MYPORT)){
                 //내가 새로 추가된 노드 일때는 push 할 필요 없음.
-                //msg.Type 'Array'에서 처리되어야 함. (server.js 52 line)
+                //msg.Type 'Array'에서 처리되어야 함. (server.js 68 line)
                 client.push(msg.Object);
                 node_list.push(new WebSocket(getWsAddr(msg.Object.IP,msg.Object.Port)));
                 connect_node(node_list[node_list.length-1].ws); 
