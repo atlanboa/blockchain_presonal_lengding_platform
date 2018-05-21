@@ -1,30 +1,39 @@
 /**
- * @author Yeji-Kim
- * @date 2018-05-19
- * @description Blockchain class. usage: var chain=new BlockChain()
- * @editor Jaden-Kim
+ * @author Yeji-Kim Jaden-Kim
+ * @date 2018-05-21
+ * @description Blockchain class
+ * @example var chain=new BlockChain()
  */
 var Block = require('./block.js');
-
+var Transaction=require('./Transaction.js');
 
 module.exports = class Blockchain {
+    /**
+     * @class BlockChain
+     * 
+     * @property {Integer} verify VBR message count variable
+     * @property {Integer} count BRR message count variable
+     * 
+     * @function createGenesisBlock blockchain이 생성이 되면 genesisBlock이 처음 체인에 달리게됨 이 때 index를 증가시켜줌
+     * @function createTempBlock make msg into block and save block as tempBlock
+     * @function createBlock When Client needs to create block and send other peers
+     * @function appendingBlock When Client makes a decision to add a block to the blockchain
+     * @function verifyBlock verify init이 0이면 client가 검증 정보를 전달하기 전에 verify++해야함
+     * @function isChainValid Check that Chain is valid.
+     */
     constructor() {
         this.chain = [this.createGenesisBlock()];
         this.pendingTransactions = [];
         this.verify = 0;
         this.count = 0;
         this.tempBlock = undefined;
-        
-
+    
         //this.miningReward = 100;
         //this.difficulty = 2;
     }
 
-
-    //blockchain이 생성이 되면 genesisBlock이 처음 체인에 달리게됨
-    //이때 index를 증가시켜줌
     createGenesisBlock() { 
-        var genesisBlock = new Block(Date.parse("2017-01-01"), [], "0", 0);
+        var genesisBlock = new Block(Date.parse("2017-01-01"), new Transaction(), "0", 0);
         return genesisBlock;
     }
 
@@ -32,25 +41,23 @@ module.exports = class Blockchain {
         return this.chain[this.chain.length - 1];
     }
 
-    //make msg into block and save block as tempBlock
     createTempBlock(msg){
         this.tempBlock = new Block(msg.Block.PreviousHash, msg.Block.Timestamp
         , msg.Block.Transactions, msg.Block.Hash, msg.Block.Index);
     }
 
-    createBlock() { //When Client needs to create block and send other peers
-        let block = new Block(Date.now(), this.pendingTransactions, this.getLatestBlock().hash, this.getLatestBlock.index+1);
+    createBlock() {
+        let block = new Block(Date.now(), this.pendingTransactions.shift(), this.getLatestBlock().hash, this.getLatestBlock.index+1);
         this.tempBlock = block;
     }
 
-    //서버도 체인을 가진다면..?
-    appendingBlock() { //When Client makes a decision to add a block to the blockchain
+    appendingBlock() {
         this.chain.push(this.tempBlock);
         this.verify = 0;
         this.count =0;
     }
 
-    verifyBlock() { //verify init이 0이면 client가 검증 정보를 전달하기 전에 verify++해야함
+    verifyBlock() {
         let previousblock = this.getLatestBlock();
         if (this.tempBlock.hash == previousblock.calculateHash()) {
             return true;
@@ -68,7 +75,6 @@ module.exports = class Blockchain {
         CCR.Data.Info = 'None';
         return CCR;
     }
-
     makeBRR(){
         var BRR ={};
         BRR.Format = 'BRR';
@@ -98,7 +104,6 @@ module.exports = class Blockchain {
 
         return VBR;
     }
-
     makeBAR(){
         var BAR ={};
         BAR.Format = 'BAR';
@@ -109,14 +114,9 @@ module.exports = class Blockchain {
     }
     makeBDS() {
         var BDS = {};
-<<<<<<< HEAD
-        BDS.PreviousHash = this.tempBlock.previousHash;
-        BDS.Timestamp = this.tempBlock.timestamp;
-=======
         BDS.Format = 'BDS';
         BDS.PreviousHash = this.block.previousHash;
         BDS.Timestamp = this.block.timestamp;
->>>>>>> master
         BDS.Transactions = {};
         BDS.Transactions.Creditor = this.tempBlock.creditor;
         BDS.Transactions.Debtor = this.tempBlock.debtor;
@@ -160,8 +160,16 @@ module.exports = class Blockchain {
         CIS.Format = 'CIS';
         CIS.Status = 'Success';
     }
-
-
+    makeACQ(){
+        var ACQ={
+            Format:'ACQ',
+            Data:{
+                chain:this.chain,
+                pendingTransactions:this.pendingTransactions,
+            }
+        };
+        return ACQ;
+    }
 
     makeTRD() {
         var TRD = {};
@@ -172,10 +180,6 @@ module.exports = class Blockchain {
         //     TRD.Data.push(this.pendingTransactions.shift());
         // }
         return TRD;
-    }
-
-    makeACQ(){
-        
     }
 
     makeACS(boolean){
@@ -223,4 +227,18 @@ module.exports = class Blockchain {
 
         return true;
     }
+    //string으로 전달받은 chain을 다시 바꾸는중..
+    changeStringChain_to_BlockChain(arr){
+        this.chain.pop(); //pop genesis block.
+        arr.forEach(ele=>{
+            this.chain.push(new Block(ele.timestamp,new Transaction(ele.transactions.creditor,ele.transactions.debtor,ele.transactions.money),ele.previousHash,ele.index));
+        })
+        
+    }
+    changeString_to_Transactions(arr){
+        arr.forEach(ele=>{
+            this.pendingTransactions.push(new Transaction(ele.creditor,ele.debtor,ele.money));
+        })
+    }
+
 }
