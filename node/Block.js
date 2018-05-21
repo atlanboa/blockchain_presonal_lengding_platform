@@ -5,6 +5,7 @@
  * @editor Jaden-Kim
  */
 const SHA256 = require('crypto-js/sha256')
+
 module.exports=class Block{
     constructor(timestamp, transactions, previousHash = '', index) {
         this.previousHash = previousHash;
