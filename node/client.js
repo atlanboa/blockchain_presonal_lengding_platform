@@ -30,6 +30,9 @@ var ws=new WebSocket('ws://'+WEB_SERVER_IP+':'+PORT.toString());
  */
 var node_list=[];
 let client=[];
+var blockchain = new Blockchain();
+//blockchain.verify -> VBR message count variable
+//blockchain.count -> BRR message count variable
 
 wss.broadcast = function(data){
     wss.clients.forEach(function each(client) {
@@ -136,17 +139,47 @@ let client_recv=function(message){ //ws 에 붙어야 함.
 
 let server_recv=function(message){ //wss에 붙어야 함.
     console.log('118: server_recv,',message);
-    // var msg=JSON.parse(message);
-    
-    // if(msg.Format=='VBR'){
-    //     let len=client.length;
-    //     verify = verify +1
-    //     let n = len - parseInt((len-1)/3); //최소 n개의 valid-verifying이 있어야됨.
-    //     //@todo
-    //     if(verfiy >= n){
-    //         appendBlock(block);
-    //     }
-    // }
+
+    var msg=JSON.parse(message);
+    if(msg.Format=='BDS'){
+        //@todo
+        //tempBlock에 저장하는 코드
+        //BRR send하는 코드
+        if(blockchain.getLatestBlock().index+1 == msg.Block.index){
+            //받은 BDS 데이터의 블록 index가 다음 생성될 블록의 index와 일치하면
+            //blockchain.tempBlock에 저장
+            blockchain.createTempBlock(msg);
+            
+        }
+    }
+    else if(msg.Format=='BRR'){
+        if(blockchain.getLatestBlock().index+1 == msg.Data.index){
+            //받은 BRR 데이터의 index가 다음 생성될 블록의 index와 일치하면
+            count = count + 1;
+        }
+        let len=client.length;   
+        let n = len - parseInt((len-1)/3); //최소 n개의 valid-verifying이 있어야됨.
+        //@todo
+        if(count >= n){
+            //n개 이상의 node가 블록을 수신했으면 검증 결과 배포
+            verifiedResult();
+        }
+    }
+    else if(msg.Format=='VBR'){ //sendingBlock 함수가 실행될때 verify는 0으로 초기화
+        if((blockchain.getLatestBlock().index+1 == msg.Data.index)
+            && msg.Data.Status =='Valid'){
+            //받은 VBR 데이터의 index가 다음 생성될 블록의 index와 일치하면
+            verify = verify +1;
+        }
+        let len=client.length;
+        let n = len - parseInt((len-1)/3); //최소 n개의 valid-verifying이 있어야됨.
+        //@todo
+        if(verfiy >= n){
+            //n개 이상의 node가 블록이 valid하다고 했을때
+            blockchain.appendingBlock();
+        }
+    }
+
 }
 
 function verifiedResult(){

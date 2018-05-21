@@ -16,6 +16,7 @@ BRR_Data: BRRDataFormat
         "Format": "BRR",
         "Data": {
                 "Status": "Success", // { "Success" }
+                "Index" : block_index
                 "Info": "None" // { "None" }
         }
 }
@@ -25,7 +26,8 @@ VBR_Data: VBRDataFormat
 {
         "Format": "VBR",
         "Data": {
-                "Status": "Valid", // { "Valid", "Non_valid" }
+                "Status": "Valid", // { "Valid", "Invalid" }
+                "Index" : block_index
                 "Info": "None" // { "None" }
         }
 }

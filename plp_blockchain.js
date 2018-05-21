@@ -3,7 +3,7 @@ var app=express();
 var bodyParser=require('body-parser');
 //var router=require('./router/main')(app);
 
-app.set('views',__dirname+'/views'); 
+app.set('views',__dirname+'/view'); 
 app.set('view engine','ejs');
 //setting using EJS engine when server render html
 app.engine('html',require('ejs').renderFile);
