@@ -126,7 +126,9 @@ let webServer_recv=function(message){
             console.log('135,Warnning, BlockChain is changed. Is that right?');
         }
     }
-
+    else if(msg.Format=='CCR'){
+        sendBlock();
+    }
 }
 
 /**각 노드와 연결하려는 부분 */
@@ -198,8 +200,8 @@ function verifiedResult(){
 }
 
 function sendBlock(){
-    Blockchain.block = Blockchain.createBlock();
-    wss.broadcast(JSON.stringify(Blockchain.makeBDS()));
+    blockchain.pendingTransactions.push(new Transaction(msg.Transaction.creditor,msg.Transaction.debtor,msg.Transaction.money));
+    wss.broadcast(JSON.stringify(blockchain.makeBDS()));
 }
 
 function sendBRR(){
