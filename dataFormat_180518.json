@@ -94,7 +94,10 @@ TRD:Transaction Data
 
 ACQ_Data:AddChainRequest{
         Format:"ACQ",
-        Data: BlockChain //Insert Class BlockChain.
+        Data: {
+                chain: blockchain.chain,
+                pendingTransactions:blockchain.pendingTransactions,
+        } //Insert Class BlockChain.
 }
 ACS_Data:AddChainResponse{
         Format:"ACS",
