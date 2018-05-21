@@ -1,7 +1,8 @@
 /**
  * @author Yeji-Kim
  * @date 2018-05-19
- * @description Block class. usage: let block = new Block(Date.now(), this.pendingTransactions, this.getLatestBlock().hash)
+ * @description Block class. 
+ * @example let block = new Block(Date.now(), this.pendingTransactions, this.getLatestBlock().hash)
  * @editor Jaden-Kim
  */
 const SHA256 = require('crypto-js/sha256')
