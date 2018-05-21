@@ -42,12 +42,13 @@ module.exports = class Blockchain {
     }
 
     createTempBlock(msg){
-        this.tempBlock = new Block(msg.Block.PreviousHash, msg.Block.Timestamp
-        , msg.Block.Transactions, msg.Block.Hash, msg.Block.Index);
+        this.tempBlock = new Block(msg.Block.Timestamp
+        , msg.Block.Transactions, msg.Block.PreviousHash,msg.Block.Index);
     }
 
     createBlock() {
         let block = new Block(Date.now(), this.pendingTransactions.shift(), this.getLatestBlock().hash, this.getLatestBlock.index+1);
+       
         this.tempBlock = block;
     }
 
@@ -115,6 +116,7 @@ module.exports = class Blockchain {
     makeBDS() {
         var BDS = {};
         BDS.Format = 'BDS';
+        //@todo ?????
         BDS.PreviousHash = this.block.previousHash;
         BDS.Timestamp = this.block.timestamp;
         BDS.Transactions = {};

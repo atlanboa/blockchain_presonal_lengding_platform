@@ -9,11 +9,4 @@ module.exports=class Transaction{
         this.debtor = debtor;
         this.money = money;
     }
-    // makeJson(){
-    //     return {
-    //         creditor:this.creditor,
-    //         debtor:this.debtor,
-    //         money:this.money,
-    //     }
-    // }
 }

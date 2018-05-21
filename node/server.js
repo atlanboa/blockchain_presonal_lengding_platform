@@ -19,10 +19,10 @@ let client=[]; //save client ip and port
 
 var blockchain=new BlockChain();
 blockchain.createGenesisBlock();
-blockchain.createTransaction(new Transaction('aa','bb',10000));
-blockchain.createTransaction(new Transaction('ab','dd',12300));
-blockchain.createTransaction(new Transaction('ac','ab',12000));
-blockchain.createTransaction(new Transaction('dd','aa',10400));
+
+// blockchain.createTransaction(new Transaction('ab','dd',12300));
+// blockchain.createTransaction(new Transaction('ac','ab',12000));
+// blockchain.createTransaction(new Transaction('dd','aa',10400));
 
 
 wss.broadcast = function(data){
@@ -103,3 +103,20 @@ const interval=setInterval(function ping(){
         
     });
 },30000);
+
+const interval2=setInterval(()=>{
+    if(blockchain.pendingTransactions.length > 1){
+        wss.clients[Math.floor(Math.random()*client.length)].send(JSON.stringify({
+            Format: "CCR",
+            Data: {
+                    "Status": "Confirm",
+                    "Info": "None",
+            },
+            Transaction:blockchain.pendingTransactions.shift(),
+        }));
+    }
+},3000);
+
+setTimeout(()=>{
+    blockchain.createTransaction(new Transaction('aa','bb',10000));
+},5000);
