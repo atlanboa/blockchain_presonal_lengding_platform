@@ -25,7 +25,9 @@ module.exports = class Blockchain {
         this.chain = [this.createGenesisBlock()];
         this.pendingTransactions = [];
         this.verify = 0;
+        this.verify_state = true;
         this.count = 0;
+        this.count_state = true;
         this.tempBlock = undefined;
     
         //this.miningReward = 100;
@@ -41,26 +43,28 @@ module.exports = class Blockchain {
         return this.chain[this.chain.length - 1];
     }
 
-    createTempBlock(msg){
-        this.tempBlock = new Block(msg.Block.Timestamp
-        , msg.Block.Transactions, msg.Block.PreviousHash,msg.Block.Index);
+    createTempBlock2(timestamp,transaction,previousHash,index){
+        this.tempBlock=new Block(timestamp,transaction,previousHash,index);
     }
 
-    createBlock() {
-        let block = new Block(Date.now(), this.pendingTransactions.shift(), this.getLatestBlock().hash, this.getLatestBlock.index+1);
+    createTempBlock() {
+        let block = new Block(Date.now(), this.pendingTransactions.shift(), this.getLatestBlock().index+1);
        
         this.tempBlock = block;
     }
 
     appendingBlock() {
-        this.chain.push(this.tempBlock);
+        this.verify_state=false;
         this.verify = 0;
         this.count =0;
+        this.chain.push(this.tempBlock);
+        
     }
 
     verifyBlock() {
         let previousblock = this.getLatestBlock();
         if (this.tempBlock.hash == previousblock.calculateHash()) {
+            this.verify++;
             return true;
         }
         else {
@@ -116,15 +120,12 @@ module.exports = class Blockchain {
     makeBDS() {
         var BDS = {};
         BDS.Format = 'BDS';
-        //@todo ?????
-        BDS.PreviousHash = this.block.previousHash;
-        BDS.Timestamp = this.block.timestamp;
-        BDS.Transactions = {};
-        BDS.Transactions.Creditor = this.tempBlock.creditor;
-        BDS.Transactions.Debtor = this.tempBlock.debtor;
-        BDS.Transactions.Money = this.tempBlock.money;
+        BDS.PreviousHash = this.tempBlock.previousHash;
+        BDS.Timestamp = this.tempBlock.timestamp;
+        BDS.Transactions = this.tempBlock.transactions;
         BDS.Hash = this.tempBlock.hash;
         BDS.Index = this.tempBlock.index;
+
         return BDS;
 
     }

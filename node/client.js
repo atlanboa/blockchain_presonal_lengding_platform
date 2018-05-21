@@ -149,6 +149,9 @@ let client_recv=function(message){ //ws 에 붙어야 함.
     console.log('113: client_recv,',message);
 }
 
+var object_to_Transaction=function(msg) {
+    return new Transaction(msg.Creditor,msg.Debtor,msg.Money);
+}
 
 let server_recv=function(message){ //wss에 붙어야 함.
     console.log('118: server_recv,',message);
@@ -158,57 +161,59 @@ let server_recv=function(message){ //wss에 붙어야 함.
         //@todo
         //tempBlock에 저장하는 코드
         //BRR send하는 코드
-        if(blockchain.getLatestBlock().index+1 == msg.Block.index){
+        if(blockchain.getLatestBlock().index+1 == msg.Block.Index){
             //받은 BDS 데이터의 블록 index가 다음 생성될 블록의 index와 일치하면
             //blockchain.tempBlock에 저장
-            blockchain.createTempBlock(msg);
-            
+            blockchain.createTempBlock2(msg.Block.TimeStamp,object_to_Transaction(msg.Block.Transactions),msg.Block.PreviousHash,msg.Block.Index);
+
+            wss.broadcast(JSON.stringify(blockchain.makeBRR()));
         }
     }
     else if(msg.Format=='BRR'){
-        if(blockchain.getLatestBlock().index+1 == msg.Data.index){
+        if(blockchain.getLatestBlock().index+1 == msg.Data.Index){
             //받은 BRR 데이터의 index가 다음 생성될 블록의 index와 일치하면
-            count = count + 1;
+            blockchain.count = blockchain.count + 1;
+            let len=client.length;   
+            let n = len - parseInt((len-1)/3); //최소 n개의 valid-verifying이 있어야됨.
+            //@todo
+            if((blockchain.count >= n)&&(blockchain.count_state == true)){
+                //n개 이상의 node가 블록을 수신했으면 검증 결과 배포
+                verifiedResult();
+            }
         }
-        let len=client.length;   
-        let n = len - parseInt((len-1)/3); //최소 n개의 valid-verifying이 있어야됨.
-        //@todo
-        if(count >= n){
-            //n개 이상의 node가 블록을 수신했으면 검증 결과 배포
-            verifiedResult();
-        }
+
     }
     else if(msg.Format=='VBR'){ //sendingBlock 함수가 실행될때 verify는 0으로 초기화
-        if((blockchain.getLatestBlock().index+1 == msg.Data.index)
+        if((blockchain.getLatestBlock().index+1 == msg.Data.Index)
             && msg.Data.Status =='Valid'){
             //받은 VBR 데이터의 index가 다음 생성될 블록의 index와 일치하면
-            verify = verify +1;
+            blockchain.verify = blockchain.verify +1;
+            let len=client.length;
+            let n = len - parseInt((len-1)/3); //최소 n개의 valid-verifying이 있어야됨.
+            //@todo
+            if((blockchain.verfiy >= n)&&(blockchain.verify_state == true)){
+                //n개 이상의 node가 블록이 valid하다고 했을때
+                blockchain.appendingBlock();
+            }
         }
-        let len=client.length;
-        let n = len - parseInt((len-1)/3); //최소 n개의 valid-verifying이 있어야됨.
-        //@todo
-        if(verfiy >= n){
-            //n개 이상의 node가 블록이 valid하다고 했을때
-            blockchain.appendingBlock();
-        }
+
     }
 
 }
 
 function verifiedResult(){
-    wss.broadcast(JSON.stringify(Blockchain.makeVBR(Blockchain.verifyBlock())));
+    blockchain.count_state = false;
+    blockchain.verify_state = true;
+    wss.broadcast(JSON.stringify(blockchain.makeVBR(blockchain.verifyBlock())));
 }
 
 function sendBlock(){
-    blockchain.pendingTransactions.push(new Transaction(msg.Transaction.creditor,msg.Transaction.debtor,msg.Transaction.money));
+    blockchain.pendingTransactions.push(new Transaction(msg.Transaction.creditor,msg.Transaction.debtor,msg.Transaction.money))
+    blockchain.createTempBlock();
+    blockchain.count++;
+    blockchain.count_state=true;
     wss.broadcast(JSON.stringify(blockchain.makeBDS()));
 }
-
-function sendBRR(){
-    wss.broadcast(JSON.stringify(Blockchain.makeBRR()));
-}
-
-
 
 /** other function */
 
