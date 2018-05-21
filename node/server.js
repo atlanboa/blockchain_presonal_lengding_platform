@@ -5,14 +5,25 @@
 var WebSocket = require('ws');
 //const debug=require('./makedebuglog.js').debug_error();
 var BlockChain=require('./Blockchain.js');
-var wss = new WebSocket.Server({ port:8888 });
+var Transaction=require('./Transaction.js');
+var wss = new WebSocket.Server({ port:8889 });
 
 /**
  * @namespace {Object} client
  * @example
  * client=[ { IP:String, Port:Integer},... ]
+ * @namespace {BlockChain} blockchain
+ * @description server가 가질 chain 변수 이름
  */
 let client=[]; //save client ip and port
+
+var blockchain=new BlockChain();
+blockchain.createGenesisBlock();
+blockchain.createTransaction(new Transaction('aa','bb',10000));
+blockchain.createTransaction(new Transaction('ab','dd',12300));
+blockchain.createTransaction(new Transaction('ac','ab',12000));
+blockchain.createTransaction(new Transaction('dd','aa',10400));
+
 
 wss.broadcast = function(data){
         wss.clients.forEach(function each(client) {
@@ -55,9 +66,7 @@ let recv=function(message){
         if(client.length > 1)
             wss.broadcast(JSON.stringify(makeCIQ('Object')));
         
-        var ACQ={ Format:'ACQ', Data:BlockChain };
-        ws.send(JSON.stringify(ACQ));
-
+        this.send(JSON.stringify(blockchain.makeACQ()));
     }
     else if(msg.Format=='CIS'){
         if(msg.Status=='Fail'){

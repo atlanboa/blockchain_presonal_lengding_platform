@@ -4,8 +4,9 @@
  * 
 */
 const BlockChain=require('./Blockchain.js');
+const Block=require('./Block.js');
 const WEB_SERVER_IP=require('ip').address().toString();
-const PORT=8888;
+const PORT=8889;
 const MYPORT=getRandomInt(3000,8500);
 
 console.log('WebServer port:',PORT,' My wss port:',MYPORT);
@@ -25,19 +26,13 @@ var ws=new WebSocket('ws://'+WEB_SERVER_IP+':'+PORT.toString());
  * @example
  * client=[{IP:,Port:},...]
  * WebServer_ws 에서 CIQ로 날라온 접속된 client의 목록을 저장하는 변수입니다.
- * @namespace {BlockChain} myChain
+ * @namespace {BlockChain} blockchain
  * @description client가 가질 Chain 변수 이름
  */
 var node_list=[];
 let client=[];
-<<<<<<< HEAD
-var blockchain = new Blockchain();
-//blockchain.verify -> VBR message count variable
-//blockchain.count -> BRR message count variable
-=======
-var myChain;
+var blockchain=undefined;
 
->>>>>>> master
 
 wss.broadcast = function(data){
     wss.clients.forEach(function each(client) {
@@ -91,10 +86,11 @@ let webServer_recv=function(message){
                     console.log('74: My Ip and Port. Ignore.');
                 }
             });
+
             node_list.forEach(ele=>{
                 connect_node(ele.ws);
                 console.log('79: Connect with',ele.IP,':',ele.Port);
-            })
+            });
 
         }else if(msg.Type=='Object'){
             if(!(msg.Object.IP==IP && msg.Object.Port==MYPORT)){
@@ -121,8 +117,14 @@ let webServer_recv=function(message){
         }
     }
     else if(msg.Format=='ACQ'){
-        delete Blockchain;
-        Blockchain = new Blockchain
+        if(!blockchain){ //not setting
+            blockchain = new BlockChain();
+            blockchain.changeStringChain_to_BlockChain(msg.Data.chain);
+            blockchain.changeString_to_Transactions(msg.Data.pendingTransactions);
+
+        }else{
+            console.log('135,Warnning, BlockChain is changed. Is that right?');
+        }
     }
 
 }
