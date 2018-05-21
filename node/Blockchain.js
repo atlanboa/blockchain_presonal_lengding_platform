@@ -12,34 +12,47 @@ module.exports = class Blockchain {
         this.chain = [this.createGenesisBlock()];
         this.pendingTransactions = [];
         this.verify = 0;
-        this.block;
+        this.count = 0;
+        this.tempBlock = undefined;
+        
 
         //this.miningReward = 100;
         //this.difficulty = 2;
     }
 
-    createGenesisBlock() {
-        return new Block(Date.parse("2017-01-01"), [], "0");
+
+    //blockchain이 생성이 되면 genesisBlock이 처음 체인에 달리게됨
+    //이때 index를 증가시켜줌
+    createGenesisBlock() { 
+        var genesisBlock = new Block(Date.parse("2017-01-01"), [], "0", 0);
+        return genesisBlock;
     }
 
     getLatestBlock() {
         return this.chain[this.chain.length - 1];
     }
 
+    //make msg into block and save block as tempBlock
+    createTempBlock(msg){
+        this.tempBlock = new Block(msg.Block.PreviousHash, msg.Block.Timestamp
+        , msg.Block.Transactions, msg.Block.Hash, msg.Block.Index);
+    }
+
     createBlock() { //When Client needs to create block and send other peers
-        let block = new Block(Date.now(), this.pendingTransactions, this.getLatestBlock().hash);
-        block.increaseIndex();
-        this.block = block;
+        let block = new Block(Date.now(), this.pendingTransactions, this.getLatestBlock().hash, this.getLatestBlock.index+1);
+        this.tempBlock = block;
     }
 
     //서버도 체인을 가진다면..?
     appendingBlock() { //When Client makes a decision to add a block to the blockchain
-        this.chain.push(this.block);
+        this.chain.push(this.tempBlock);
+        this.verify = 0;
+        this.count =0;
     }
 
-    verifyBlock() {
+    verifyBlock() { //verify init이 0이면 client가 검증 정보를 전달하기 전에 verify++해야함
         let previousblock = this.getLatestBlock();
-        if (this.block.hash == previousblock.calculateHash()) {
+        if (this.tempBlock.hash == previousblock.calculateHash()) {
             return true;
         }
         else {
@@ -61,6 +74,7 @@ module.exports = class Blockchain {
         BRR.Format = 'BRR';
         BRR.Data = {};
         BRR.Data.Status = 'Success';
+        BRR.Data.Index = this.tempBlock.index;
         BRR.Data.Info = 'None'
         return BRR;
     }
@@ -71,6 +85,7 @@ module.exports = class Blockchain {
             VBR.Format = 'VBR';
             VBR.Data = {};
             VBR.Data.Status = 'Valid';
+            VBR.Data.Index = this.tempBlock.index;
             VBR.Data.Info = 'None';
         }
         else {
@@ -94,15 +109,20 @@ module.exports = class Blockchain {
     }
     makeBDS() {
         var BDS = {};
+<<<<<<< HEAD
+        BDS.PreviousHash = this.tempBlock.previousHash;
+        BDS.Timestamp = this.tempBlock.timestamp;
+=======
         BDS.Format = 'BDS';
         BDS.PreviousHash = this.block.previousHash;
         BDS.Timestamp = this.block.timestamp;
+>>>>>>> master
         BDS.Transactions = {};
-        BDS.Transactions.Creditor = this.block.creditor;
-        BDS.Transactions.Debtor = this.block.debtor;
-        BDS.Transactions.Money = this.block.money;
-        BDS.Hash = this.block.hash;
-        BDS.Index = this.block.index;
+        BDS.Transactions.Creditor = this.tempBlock.creditor;
+        BDS.Transactions.Debtor = this.tempBlock.debtor;
+        BDS.Transactions.Money = this.tempBlock.money;
+        BDS.Hash = this.tempBlock.hash;
+        BDS.Index = this.tempBlock.index;
         return BDS;
 
     }
