@@ -4,7 +4,7 @@
 */
 var WebSocket = require('ws');
 //const debug=require('./makedebuglog.js').debug_error();
-
+var BlockChain=require('./Blockchain.js');
 var wss = new WebSocket.Server({ port:8888 });
 
 /**
@@ -54,6 +54,10 @@ let recv=function(message){
         //지금 접속한 얘 제외하고 나머지에게 최근에 들어온 node를 접속하라고 CIQ_type:Obj로 전송 -> client.js 에서 제어
         if(client.length > 1)
             wss.broadcast(JSON.stringify(makeCIQ('Object')));
+        
+        var ACQ={ Format:'ACQ', Data:BlockChain };
+        ws.send(JSON.stringify(ACQ));
+
     }
     else if(msg.Format=='CIS'){
         if(msg.Status=='Fail'){

@@ -3,7 +3,7 @@
  * @description: node _ ws client.
  * 
 */
-var Blockchain = require('./Blockchain.js');
+const BlockChain=require('./Blockchain.js');
 const WEB_SERVER_IP=require('ip').address().toString();
 const PORT=8888;
 const MYPORT=getRandomInt(3000,8500);
@@ -13,8 +13,6 @@ console.log('WebServer port:',PORT,' My wss port:',MYPORT);
 const IP=require('ip').address();
 
 var WebSocket = require('ws');
-//const debug=require('./makedebuglog.js').debug_error();
-
 var wss=new WebSocket.Server({ port: MYPORT });
 var ws=new WebSocket('ws://'+WEB_SERVER_IP+':'+PORT.toString());
 
@@ -27,12 +25,19 @@ var ws=new WebSocket('ws://'+WEB_SERVER_IP+':'+PORT.toString());
  * @example
  * client=[{IP:,Port:},...]
  * WebServer_ws 에서 CIQ로 날라온 접속된 client의 목록을 저장하는 변수입니다.
+ * @namespace {BlockChain} myChain
+ * @description client가 가질 Chain 변수 이름
  */
 var node_list=[];
 let client=[];
+<<<<<<< HEAD
 var blockchain = new Blockchain();
 //blockchain.verify -> VBR message count variable
 //blockchain.count -> BRR message count variable
+=======
+var myChain;
+
+>>>>>>> master
 
 wss.broadcast = function(data){
     wss.clients.forEach(function each(client) {
@@ -115,6 +120,10 @@ let webServer_recv=function(message){
             
         }
     }
+    else if(msg.Format=='ACQ'){
+        delete Blockchain;
+        Blockchain = new Blockchain
+    }
 
 }
 
@@ -183,9 +192,7 @@ let server_recv=function(message){ //wss에 붙어야 함.
 }
 
 function verifiedResult(){
-    let Boolean = Blockchain.verifyBlock();
-    wss.broadcast(JSON.stringify(Blockchain.makeVBR(Boolean)));
-
+    wss.broadcast(JSON.stringify(Blockchain.makeVBR(Blockchain.verifyBlock())));
 }
 
 function sendBlock(){
