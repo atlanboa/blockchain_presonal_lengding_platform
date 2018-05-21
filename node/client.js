@@ -147,15 +147,6 @@ var connect_node=function(ws){
 
 let client_recv=function(message){ //ws 에 붙어야 함.
     console.log('113: client_recv,',message);
-}
-
-var object_to_Transaction=function(msg) {
-    return new Transaction(msg.Creditor,msg.Debtor,msg.Money);
-}
-
-let server_recv=function(message){ //wss에 붙어야 함.
-    console.log('118: server_recv,',message);
-
     var msg=JSON.parse(message);
     if(msg.Format=='BDS'){
         //@todo
@@ -165,10 +156,11 @@ let server_recv=function(message){ //wss에 붙어야 함.
             //받은 BDS 데이터의 블록 index가 다음 생성될 블록의 index와 일치하면
             //blockchain.tempBlock에 저장
             blockchain.createTempBlock2(msg.Block.TimeStamp,object_to_Transaction(msg.Block.Transactions),msg.Block.PreviousHash,msg.Block.Index);
-
-            wss.broadcast(JSON.stringify(blockchain.makeBRR()));
+            blockchain.count_state=true;
+            setTimeout(wss.broadcast(JSON.stringify(blockchain.makeBRR())),3000);
         }
     }
+    
     else if(msg.Format=='BRR'){
         if(blockchain.getLatestBlock().index+1 == msg.Data.Index){
             //받은 BRR 데이터의 index가 다음 생성될 블록의 index와 일치하면
@@ -181,8 +173,20 @@ let server_recv=function(message){ //wss에 붙어야 함.
                 verifiedResult();
             }
         }
-
     }
+
+}
+
+var object_to_Transaction=function(msg) {
+    return new Transaction(msg.Creditor,msg.Debtor,msg.Money);
+}
+
+let server_recv=function(message){ //wss에 붙어야 함.
+    console.log('118: server_recv,',message);
+
+    var msg=JSON.parse(message);
+    
+    
     else if(msg.Format=='VBR'){ //sendingBlock 함수가 실행될때 verify는 0으로 초기화
         if((blockchain.getLatestBlock().index+1 == msg.Data.Index)
             && msg.Data.Status =='Valid'){
@@ -204,7 +208,7 @@ let server_recv=function(message){ //wss에 붙어야 함.
 function verifiedResult(){
     blockchain.count_state = false;
     blockchain.verify_state = true;
-    wss.broadcast(JSON.stringify(blockchain.makeVBR(blockchain.verifyBlock())));
+    setTimeout(wss.broadcast(JSON.stringify(blockchain.makeVBR(blockchain.verifyBlock()))),3000);
 }
 
 function sendBlock(){

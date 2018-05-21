@@ -25,9 +25,9 @@ module.exports = class Blockchain {
         this.chain = [this.createGenesisBlock()];
         this.pendingTransactions = [];
         this.verify = 0;
-        this.verify_state = true;
+        this.verify_state = false;
         this.count = 0;
-        this.count_state = true;
+        this.count_state = false;
         this.tempBlock = undefined;
     
         //this.miningReward = 100;
