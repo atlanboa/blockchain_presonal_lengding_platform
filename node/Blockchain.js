@@ -19,7 +19,7 @@ module.exports = class Blockchain {
     }
 
     createGenesisBlock() {
-        return new Block(Date.parse("2017-01-01"), [], "0");
+        return new Block(Date.parse("2017-01-01"), [], "0",0);
     }
 
     getLatestBlock() {
