@@ -128,7 +128,7 @@ let webServer_recv=function(message){
         }
     }
     else if(msg.Format=='CCR'){
-        sendBlock();
+        sendBlock(msg);
     }
 }
 
@@ -136,7 +136,7 @@ let webServer_recv=function(message){
 var connect_node=function(ws){
     ws.on('open',()=>{
         //console.log('Connect with node I\'m',IP);
-        ws.send("I'm "+IP.toString()+':'+MYPORT.toString());
+        //ws.send("I'm "+IP.toString()+':'+MYPORT.toString());
  
         ws.on('close',()=>{
             console.log('105: Connection_node is closed!');
@@ -212,20 +212,13 @@ function verifiedResult(){
     setTimeout(wss.broadcast(JSON.stringify(blockchain.makeVBR(blockchain.verifyBlock()))),3000);
 }
 
-function sendBlock(){
+function sendBlock(msg){
     blockchain.pendingTransactions.push(new Transaction(msg.Transaction.creditor,msg.Transaction.debtor,msg.Transaction.money));
     blockchain.createTempBlock();
     blockchain.count++;
     wss.broadcast(JSON.stringify(blockchain.makeBDS()));
 }
 
-function test_sendBlock(){
-    console.log('1 : sendBDS');
-    blockchain.pendingTransactions.push(new Transaction('sangheon','yeji',70000));
-    blockchain.createTempBlock();
-    blockchain.count++;
-    wss.broadcast(JSON.stringify(blockchain.makeBDS()));
-}
 
 /** other function */
 
