@@ -8,7 +8,7 @@ CCR_Data: CCRDataFormat
                 "Status": "Confirm", // { "Confirm" }
                 "Info": "None" // { "None" }
         },
-        Transaction: {}, //type Transaction
+        "Transaction": {}, //type Transaction
 }
 
 //Block Reception Response
