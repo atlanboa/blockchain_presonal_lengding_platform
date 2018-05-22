@@ -1,5 +1,6 @@
-var object = {};
-object.index = 1;
-object.name = 'test';
+var object = [];
+object.push(1);
+object.push(2);
 
-console.log(object);
+console.log(object.length);
+console.log(typeof(Date.parse(Date.now())));

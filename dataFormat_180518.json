@@ -51,9 +51,9 @@ BDS_Data: BDSDataFormat
                 "PreviousHash" : "",
                 "Timestamp": "1526650507582", // date.now  
                 "Transactions": {                    
-                    "Creditor" : "sangheon", //{ "Creditor id" }
-                    "Debtor" : "yeji",//{ "debtor id" }
-                    "Money" : 50000
+                    "creditor" : "sangheon", //{ "Creditor id" }
+                    "debtor" : "yeji",//{ "debtor id" }
+                    "money" : 50000
                 },
                 "Hash" : "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b982",
                 "Index" : 0 // this variable has to be deleted later
