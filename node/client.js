@@ -1,7 +1,7 @@
 /**
- * @author: Yeji-Kim
+ * @author: Yeji-Kim, Sangheon-Kim
  * @description: node _ ws client.
- * 
+ * @2018.05.23
 */
 const BlockChain=require('./Blockchain.js');
 const Block=require('./Block.js');
