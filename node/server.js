@@ -107,8 +107,15 @@ const interval=setInterval(function ping(){
 },30000);
 
 const interval2=setInterval(()=>{
-    if(blockchain.pendingTransactions.length > 1){
-        wss.clients[Math.floor(Math.random()*client.length)].send(JSON.stringify({
+    if(blockchain.pendingTransactions.length >= 1){
+        var random_int=Math.floor(Math.random()*client.length);
+        var iter=wss.clients.values(); //type Set
+    
+        for(let i=0;i<random_int-1;i++){
+            iter.next();
+        }
+
+        iter.next().value.send(JSON.stringify({
             Format: "CCR",
             Data: {
                     "Status": "Confirm",
@@ -116,9 +123,11 @@ const interval2=setInterval(()=>{
             },
             Transaction:blockchain.pendingTransactions.shift(),
         }));
+        console.log('126, Send CCR to',client[random_int].IP,':',client[random_int].Port);
     }
 },3000);
 
-// setTimeout(()=>{
-//     blockchain.createTransaction(new Transaction('aa','bb',10000));
-// },5000);
+setTimeout(()=>{
+    blockchain.createTransaction(new Transaction('aa','bb',10000));
+    console.log('132, Make new Transactions!');
+},2000);
