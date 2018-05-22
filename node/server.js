@@ -18,7 +18,9 @@ var wss = new WebSocket.Server({ port:8889 });
 let client=[]; //save client ip and port
 
 var blockchain=new BlockChain();
-blockchain.createGenesisBlock();
+//new Blockchain해주면 genesis Block은 기본으로 생성됨.
+//Blockchain.js constructor 확인해봐
+// blockchain.createGenesisBlock();
 
 // blockchain.createTransaction(new Transaction('ab','dd',12300));
 // blockchain.createTransaction(new Transaction('ac','ab',12000));
@@ -66,7 +68,7 @@ let recv=function(message){
         if(client.length > 1)
             wss.broadcast(JSON.stringify(makeCIQ('Object')));
         
-        this.send(JSON.stringify(blockchain.makeACQ()));
+        // this.send(JSON.stringify(blockchain.makeACQ()));
     }
     else if(msg.Format=='CIS'){
         if(msg.Status=='Fail'){
@@ -117,6 +119,6 @@ const interval2=setInterval(()=>{
     }
 },3000);
 
-setTimeout(()=>{
-    blockchain.createTransaction(new Transaction('aa','bb',10000));
-},5000);
+// setTimeout(()=>{
+//     blockchain.createTransaction(new Transaction('aa','bb',10000));
+// },5000);

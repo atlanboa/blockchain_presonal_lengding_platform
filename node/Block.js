@@ -12,11 +12,12 @@ const SHA256 = require('crypto-js/sha256')
  */
 module.exports=class Block{
     constructor(timestamp, transactions, previousHash = '', index) {
-        this.previousHash = previousHash;
         this.timestamp = timestamp;
         this.transactions = transactions;
-        this.hash = this.calculateHash();
+        this.previousHash = previousHash;
         this.index = index;
+        this.hash = this.calculateHash();
+        
         //this.nonce = 0; //variable nonce is for mining.
     }
 
