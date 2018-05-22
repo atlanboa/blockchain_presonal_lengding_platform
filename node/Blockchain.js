@@ -57,12 +57,14 @@ module.exports = class Blockchain {
         this.verify = 0;
         this.count =0;
         this.chain.push(this.tempBlock);
+        console.log('60 Blockchain.js : Chain : ',this.chain);
         
     }
 
     verifyBlock() {
         let previousblock = this.getLatestBlock();
-        if (this.tempBlock.hash == previousblock.calculateHash()) {
+        console.log('66 Blockchain.js Hash Result Comparing : ', this.tempBlock.previousHash, ' , ',previousblock.calculateHash());
+        if (this.tempBlock.previousHash == previousblock.calculateHash()) {
             this.verify++;
             return true;
         }
@@ -93,7 +95,7 @@ module.exports = class Blockchain {
         if (Boolean == true) {
             var VBR = {};
             VBR.Format = 'VBR';
-            VBR.Data = {};
+            VBR.Data={};
             VBR.Data.Status = 'Valid';
             VBR.Data.Index = this.tempBlock.index;
             VBR.Data.Info = 'None';
@@ -101,7 +103,7 @@ module.exports = class Blockchain {
         else {
             var VBR = {};
             VBR.Format = 'VBR';
-            VBR.Data = {};
+            VBR.Data={};
             VBR.Data.Status = 'Non_Valid';
             VBR.Data.Info = 'None';
         }
@@ -119,11 +121,12 @@ module.exports = class Blockchain {
     makeBDS() {
         var BDS = {};
         BDS.Format = 'BDS';
-        BDS.PreviousHash = this.tempBlock.previousHash;
-        BDS.Timestamp = this.tempBlock.timestamp;
-        BDS.Transactions = this.tempBlock.transactions;
-        BDS.Hash = this.tempBlock.hash;
-        BDS.Index = this.tempBlock.index;
+        BDS.Block = {};
+        BDS.Block.PreviousHash = this.tempBlock.previousHash;
+        BDS.Block.Timestamp = this.tempBlock.timestamp;
+        BDS.Block.Transactions = this.tempBlock.transactions;
+        BDS.Block.Hash = this.tempBlock.hash;
+        BDS.Block.Index = this.tempBlock.index;
 
         return BDS;
 

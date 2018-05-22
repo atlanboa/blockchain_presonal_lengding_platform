@@ -40,7 +40,7 @@ wss.broadcast = function(data){
         if(client.readyState == WebSocket.OPEN) {
             var BroadData = JSON.stringify(data);
             client.send(BroadData);
-            console.log('Braodcasting : ' + data);
+            console.log('43: Broadcasting:' + BroadData);
         }
     });
 }
@@ -92,14 +92,15 @@ let webServer_recv=function(message){
                 connect_node(ele.ws);
                 console.log('79: Connect with',ele.IP,':',ele.Port);
             });
+        }
+        else if(msg.Type=='Object'){
 
-        }else if(msg.Type=='Object'){
             if(!(msg.Object.IP==IP && msg.Object.Port==MYPORT)){
                 //내가 새로 추가된 노드 일때는 push 할 필요 없음.
                 //msg.Type 'Array'에서 처리되어야 함. (server.js 68 line)
                 client.push(msg.Object);
                 node_list.push(new WebSocket(getWsAddr(msg.Object.IP,msg.Object.Port)));
-                connect_node(node_list[node_list.length-1].ws); 
+                connect_node(node_list[node_list.length-1]); 
                 var CIS={}; CIS.Format='CIS';
                 CIS.Status='Success'; CIS.Type='Object';
                 this.send(JSON.stringify(CIS));
@@ -149,20 +150,23 @@ var connect_node=function(ws){
 let client_recv=function(message){ //ws 에 붙어야 함.
     console.log('113: client_recv,',message);
     var msg=JSON.parse(message);
-    if(msg.Format=='BDS'){
+
+    if(msg.Format == 'BDS'){
         //@todo
         //tempBlock에 저장하는 코드
         //BRR send하는 코드
+        blockchain.count += 2;
+        console.log('160 : count : ', blockchain.count);
+
         if(blockchain.getLatestBlock().index+1 == msg.Block.Index){
             //받은 BDS 데이터의 블록 index가 다음 생성될 블록의 index와 일치하면
             //blockchain.tempBlock에 저장
-            console.log('received BDS');
-            console.log(msg.Block);
-            blockchain.createTempBlock2(msg.Block.TimeStamp,object_to_Transaction(msg.Block.Transactions),msg.Block.PreviousHash,msg.Block.Index);
-            setTimeout(wss.broadcast(JSON.stringify(blockchain.makeBRR())),3000);
+
+            blockchain.createTempBlock2(msg.Block.Timestamp,object_to_Transaction(msg.Block.Transactions),msg.Block.PreviousHash,msg.Block.Index);
+            
+            wss.broadcast(blockchain.makeBRR());
         }
     }
-    
     else if(msg.Format=='BRR'){
         if(blockchain.getLatestBlock().index+1 == msg.Data.Index){
             //받은 BRR 데이터의 index가 다음 생성될 블록의 index와 일치하면
@@ -172,33 +176,24 @@ let client_recv=function(message){ //ws 에 붙어야 함.
             //@todo
             if((blockchain.count >= n)&&(blockchain.count_state == true)){
                 //n개 이상의 node가 블록을 수신했으면 검증 결과 배포
+                console.log('174 : start verfiying');
                 verifiedResult();
             }
         }
     }
-
-}
-
-var object_to_Transaction=function(msg) {
-    return new Transaction(msg.Creditor,msg.Debtor,msg.Money);
-}
-
-let server_recv=function(message){ //wss에 붙어야 함.
-    console.log('118: server_recv,',message);
-
-    var msg=JSON.parse(message);
-    
-    
-    if(msg.Format=='VBR'){ //sendingBlock 함수가 실행될때 verify는 0으로 초기화
+    else if(msg.Format=='VBR'){ //sendingBlock 함수가 실행될때 verify는 0으로 초기화
         if((blockchain.getLatestBlock().index+1 == msg.Data.Index)
             && msg.Data.Status =='Valid'){
             //받은 VBR 데이터의 index가 다음 생성될 블록의 index와 일치하면
-            blockchain.verify = blockchain.verify +1;
+            blockchain.verify++;
+            console.log('201 : verify : ',blockchain.verify);
             let len=client.length;
             let n = len - parseInt((len-1)/3); //최소 n개의 valid-verifying이 있어야됨.
+         
             //@todo
-            if(blockchain.verfiy >= n){
+            if(blockchain.verify >= n){
                 //n개 이상의 node가 블록이 valid하다고 했을때
+                console.log('194 : start appendingBlock');
                 blockchain.appendingBlock();
             }
         }
@@ -207,16 +202,30 @@ let server_recv=function(message){ //wss에 붙어야 함.
 
 }
 
+var object_to_Transaction=function(msg) {
+    return new Transaction(msg.creditor,msg.debtor,msg.money);
+}
+
+let server_recv=function(message){ //wss에 붙어야 함.
+    console.log('118: server_recv,',message);
+
+    var msg=JSON.parse(message);
+    
+    
+    
+
+}
+
 function verifiedResult(){
     blockchain.count_state = false;
-    setTimeout(wss.broadcast(JSON.stringify(blockchain.makeVBR(blockchain.verifyBlock()))),3000);
+    wss.broadcast(blockchain.makeVBR(blockchain.verifyBlock()));
 }
 
 function sendBlock(msg){
     blockchain.pendingTransactions.push(new Transaction(msg.Transaction.creditor,msg.Transaction.debtor,msg.Transaction.money));
     blockchain.createTempBlock();
     blockchain.count++;
-    wss.broadcast(JSON.stringify(blockchain.makeBDS()));
+    wss.broadcast(blockchain.makeBDS());
 }
 
 

@@ -32,7 +32,7 @@ wss.broadcast = function(data){
             if(client.readyState == WebSocket.OPEN) {
                 var BroadData = JSON.stringify(data);
                 client.send(BroadData);
-                console.log('Braodcasting : ' + data);
+                console.log('Broadcasting : ' + BroadData);
             }
         });
 }
@@ -66,7 +66,7 @@ let recv=function(message){
         
         //지금 접속한 얘 제외하고 나머지에게 최근에 들어온 node를 접속하라고 CIQ_type:Obj로 전송 -> client.js 에서 제어
         if(client.length > 1)
-            wss.broadcast(JSON.stringify(makeCIQ('Object')));
+            wss.broadcast(makeCIQ('Object'));
         
         // this.send(JSON.stringify(blockchain.makeACQ()));
     }
@@ -130,4 +130,4 @@ const interval2=setInterval(()=>{
 setTimeout(()=>{
     blockchain.createTransaction(new Transaction('aa','bb',10000));
     console.log('132, Make new Transactions!');
-},2000);
+},5000);
