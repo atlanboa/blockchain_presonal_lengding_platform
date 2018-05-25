@@ -1,10 +1,6 @@
-/**
- * @description Web_Server
- * @date 2018-05-18
- */
 var express = require('express')
 var app = express();
-const PORT = 3000;
+var port = 3000;
 
 var mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
@@ -15,9 +11,7 @@ var logger = require('morgan');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var flash = require('connect-flash');
-
 //passport 로그인 관련
-/**@description passport: client의 접근 제어를 위함 */
 var passport = require('passport');
 var session = require('express-session');
 
@@ -80,14 +74,13 @@ app.use('/admin', admin);
 app.use('/accounts', accounts);
 app.use('/auth', auth);
 app.use('/chat', chat);
-
-var server = app.listen( PORT, function(){
-    console.log('Express listening on port', PORT);
+//Css add
+app.use('/assets',express.static(__dirname+'/assets/css/main.css'));
+app.use('/images',express.static(__dirname+'/images'));
+var server = app.listen( port, function(){
+    console.log('Express listening on port', port);
 });
 
-/**@description 실시간 채팅을 위한 socket.io
- * @todo ws 로 바꾸는 방법을 생각해보기
- */
 var listen = require('socket.io');
 var io = listen(server);
 //socket io passport 접근하기 위한 미들웨어 적용
