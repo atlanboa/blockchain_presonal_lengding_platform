@@ -24,7 +24,6 @@ passport.use(new LocalStrategy({
     },
     function (req, username, password, done) {
         UserModel.findOne({ username : username , password : passwordHash(password) }, function (err,user) {
-            /**@param {user}boolean */
             if (!user){
                 return done(null, false, { message: '아이디 또는 비밀번호 오류 입니다.' });
             }else{
@@ -46,13 +45,15 @@ router.post('/join', function(req, res){
     var User = new UserModel({
         username : req.body.username,
         password : passwordHash(req.body.password),
-        displayname : req.body.displayname
+        displayname : req.body.displayname,
+        birth1: req.body.birth1,
+        birth2: req.body.birth2,
+        birth3: req.body.birth3,
+        sex : req.body.sex,
+        email : req.body.email
     });
     User.save(function(err){
-        res.send('<script>\
-            alert("회원가입 성공");\
-            location.href="/accounts/login";\
-            </script>');
+        res.send('<script>alert("회원가입 성공");location.href="/accounts/login";</script>');
     });
 });
 
@@ -61,13 +62,13 @@ router.get('/login', function(req, res){
 });
 
 router.post('/login' , 
-    passport.authenticate('local', { 
-        failureRedirect: '/accounts/login', 
-        failureFlash: true
-    }), 
-    function(req, res){
-        res.send('<script>alert("로그인 성공");location.href="/";</script>');
-    }
+passport.authenticate('local', {
+    failureRedirect: '/accounts/login', 
+    failureFlash: true 
+}), 
+function(req, res){
+    res.send('<script>location.href="/";</script>');
+}
 );
 
 router.get('/success', function(req, res){
