@@ -1,14 +1,26 @@
 <% include ../includes/header.ejs %>
     <table class="table table-bordered table-hover">
         <tr>
+            <th>종류</th>
+            <th>등급</th>
             <th>제목</th>
-            <th>작성일</th>
+            <th>거래 금액</th>
+            <th>등록일</th>
             <th>삭제</th>
         </tr>
         <%products.forEach(function(product){%>
         <tr>
             <td>
+                <%=product.type%>
+            </td>
+            <td>
+                <%=product.credit%>
+            </td>
+            <td>
                 <a href="/admin/products/detail/<%=product.id%>"><%=product.name%></a>
+            </td>
+            <td>
+                <%=product.price%>
             </td>
             <td>
                 <%=product.getDate.year%> -

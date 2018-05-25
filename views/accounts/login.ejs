@@ -1,4 +1,21 @@
-<% include ../includes/header.ejs %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!--    <meta http-equiv="X-UA-Compatible" content="ie=edge">-->
+    <title>Give me that</title>
+    <script
+    src="https://code.jquery.com/jquery-3.2.1.min.js"
+    integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+    crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/assets" />
+    <!--bootstrap js 추가 -->
+    <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body class="homepage">
 <div class="row">
     <div class="col-md-4 col-md-offset-4">
         <%if(typeof flashMessage !=='undefined') {%>
@@ -19,11 +36,7 @@
                         </div>
                         <!-- Change this to a button or input when using this as a form -->
                         <input type="submit" class="btn btn-lg btn-success btn-block" value="로그인">
-                        <div style="margin-top: 10px">
-                            <a href="/auth/facebook" class="btn btn-lg btn-primary btn-block">
-                                <i class="fa fa-facebook" aria-hidden="true"></i> 페이스북 로그인
-                            </a>
-                        </div>
+                        
                     </fieldset>
                 </form>
             </div>

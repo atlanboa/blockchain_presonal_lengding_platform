@@ -45,6 +45,8 @@ router.get('/products/write',loginRequired, csrfProtection, function(req,res){
 router.post('/products/write', upload.single('thumbnail'),loginRequired, csrfProtection, function(req,res){
     var product = new ProductsModel({
         name : req.body.name,
+        types: req.body.type,
+        credit: req.user.credit,
         thumbnail : (req.file) ? req.file.filename : "",
         price : req.body.price,
         description : req.body.description,
