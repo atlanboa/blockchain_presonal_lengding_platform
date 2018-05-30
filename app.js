@@ -88,3 +88,8 @@ io.use(function(socket, next){
   sessionMiddleWare(socket.request, socket.request.res, next);
 });
 require('./libs/socketConnection')(io);
+
+
+var web_server=require('./node/server.js');
+
+web_server.init();
