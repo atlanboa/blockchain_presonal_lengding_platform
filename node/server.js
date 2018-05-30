@@ -84,50 +84,68 @@ let recv=function(message){
 function noop(){}
 function heartbeat(){ this.isAlive=true; }
 
-wss.on('connection',function connection(ws,req){
-    ws.on('message',recv);
-    ws.on('pong',heartbeat);
-    ws.isAlive=true;
 
-});
-
-console.log('Server is opened!');
-
-
-const interval=setInterval(function ping(){
-    wss.clients.forEach((ws)=>{
-        if(ws.isAlive==false) {
-            // @todo 닫혔을 때 client[] 안에 있는거 find ip 찾아서 해당 data remove, 근데 어떻게 찾는지 모름... ㅠㅠㅠㅠ 
-            return ws.terminate();
-        }
-        ws.isAlive=false;
-        ws.ping(noop);
-        
-    });
-},30000);
-
-const interval2=setInterval(()=>{
-    if(blockchain.pendingTransactions.length >= 1){
-        var random_int=Math.floor(Math.random()*client.length);
-        var iter=wss.clients.values(); //type Set
+module.exports.init=function(){
+    wss.on('connection',function connection(ws,req){
+        ws.isAlive=true;
+        ws.on('message',recv);
+        ws.on('pong',heartbeat);
     
-        for(let i=0;i<random_int-1;i++){
-            iter.next();
+    });
+    
+    console.log('Server is opened!');
+    
+    
+    const interval=setInterval(function ping(){
+        wss.clients.forEach((ws)=>{
+            if(ws.isAlive!=true) {
+                //@todo 닫혔을 때 client[] 안에 있는거 find ip 찾아서 해당 data remove, 근데 어떻게 찾는지 모름... ㅠㅠㅠㅠ 
+                let index=client.findIndex(ele=>{
+                    return(ele.IP==ws._socket.remoteAddress);
+                })
+    
+                console.log('104,',client[index],'disconnected.');
+                
+                if(index!=0){
+                    client.slice(0,index-1).join(client.slice(index+1,client.length-1));
+                }else{
+                    client.shift();
+                }           
+                
+                return ws.terminate();
+            }else{
+                //console.log('114: all alive!');
+            }
+            ws.isAlive=false;
+            ws.ping(noop);
+            
+        });
+    },2000);
+    
+    const interval2=setInterval(()=>{
+        if(blockchain.pendingTransactions.length >= 1 && client.length!=0){
+            var random_int=Math.floor(Math.random()*client.length);
+            var iter=wss.clients.values(); //type Set
+        
+            for(let i=0;i<random_int-1;i++){
+                iter.next();
+            }
+    
+            iter.next().value.send(JSON.stringify({
+                Format: "CCR",
+                Data: {
+                        "Status": "Confirm",
+                        "Info": "None",
+                },
+                Transaction:blockchain.pendingTransactions.shift(),
+            }));
+            console.log('126, Send CCR to',client[random_int].IP,':',client[random_int].Port);
         }
+    },3000);
+    
+    setTimeout(()=>{
+        blockchain.createTransaction(new Transaction('aa','bb',10000));
+        console.log('132, Make new Transactions!');
+    },5000);
 
-        iter.next().value.send(JSON.stringify({
-            Format: "CCR",
-            Data: {
-                    "Status": "Confirm",
-                    "Info": "None",
-            },
-            Transaction:blockchain.pendingTransactions.shift(),
-        }));
-        console.log('126, Send CCR to',client[random_int].IP,':',client[random_int].Port);
-    }
-},3000);
-
-setTimeout(()=>{
-    blockchain.createTransaction(new Transaction('aa','bb',10000));
-    console.log('132, Make new Transactions!');
-},5000);
+}
