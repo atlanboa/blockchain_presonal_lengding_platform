@@ -41,9 +41,9 @@ app.use(cookieParser());
 app.use('/uploads', express.static('uploads'));
 
 var sessionMiddleWare = session({
-    secret: 'fastcampus',
-    resave: false,
-    saveUninitialized: true,
+    secret: 'fastcampus', // 암호화 코드
+    resave: false, // 세션을 언제나 저장할지 정하는 값
+    saveUninitialized: true, // 세션이 저장되기 전에 uninitalized 상태로 미리 만들어 저장
     cookie: {
       maxAge: 2000 * 60 * 60 //지속시간 2시간
     },
@@ -52,11 +52,11 @@ var sessionMiddleWare = session({
         ttl: 14 * 24 * 60 * 60
     })
 });
-app.use(sessionMiddleWare);
+app.use(sessionMiddleWare); // 세션 활성화
 
 //passport 적용
-app.use(passport.initialize());
-app.use(passport.session());
+app.use(passport.initialize()); // passport 구동
+app.use(passport.session()); // 세션연결
 
 //플래시 메시지 관련
 app.use(flash());
