@@ -41,14 +41,14 @@
 								<li><a href="/chat">Chat</a></li>
 								<% if(isLogin){%>
                                 <li>
-							    <a href="/#" onclick="return confirm('로그아웃 하시겠습니까?')">log out</a>
+							    <a href="/accounts/logout" onclick="return confirm('로그아웃 하시겠습니까?')">log out</a>
 							    </li>
 							    <%}else{%>
 							    <li>
-								<a href="/accounts/login" >log in</a>
+								<a onclick="popup()">log in</a>
                                 </li>
                                 <li>
-                                <a href="/accounts/join" scrolly">Regist</a>
+                                <a href="/accounts/join" >Regist</a>
                                 </li>
 							<%}%>
 							</ul>
@@ -65,3 +65,17 @@
 			<script src="assets/js/util.js"></script>
 			<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
 			<script src="assets/js/main.js"></script>
+			<script type="text/javascript">
+    var $masonry_container = $('#masonry_container');
+    $masonry_container.imagesLoaded(function(){
+      $masonry_container.masonry({
+        itemSelector : '.masonry-grid',
+        columnWidth : 270
+      });
+    });
+    function popup(){
+        var url ="/accounts/login";
+        var name = "popup";
+        window.open(url,name,"width=300,height=280,toolbar=no,status=no,location=no,scrollbars=yes,menubar=no,resizable=yes,left=50,right=50");
+    }
+</script>
