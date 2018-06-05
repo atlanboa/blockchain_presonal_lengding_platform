@@ -1,93 +1,47 @@
 <% include ../includes/header.ejs %>
-    <div class="panel panel-default">
+    <div style="padding: 2%;" class="panel panel-default">
         <div class="panel-heading">
+          <table>
+           <td>
             <%=product.name%>
+            </td>
+            <td style="text-align: right;">
+            작성자 : <a class="btn-info btn-sm"><%=product.credit%></a> <%=product.username%>
+            </td>
+            </table>
         </div>
         <div class="panel-body">
-            <div style="padding-bottom: 10px">
-                작성일 : 
+            <div style="padding-bottom: 10px" >
+               <table>
+               <td>
+                   대출 금액 : <%=product.price%> 원
+               </td>
+               <td style="text-align: right;">
+                상환일 : 
                 <%=product.getDate.year%> - 
                 <%=product.getDate.month%> - 
                 <%=product.getDate.day%>
+                </td>
+                </table>
+            </div>
+            <div style="padding-bottom: 10px">
+                이자율 : <%=product.interestrate%> %
+            </div>
+            <div style="padding-bottom: 10px; font-family: 'Arial';" >
+                우대조건 : 
+            </div>
+            <div style="height: auto; min-height: 100px;" class="panel panel-default">
+                내용 : <%=product.content%>
             </div>
             <% if(product.thumbnail){%>
                 <p>
                     <img src="/uploads/<%=product.thumbnail%>" style="max-width: 100%"/>
                 </p>
             <% } %>
-            <%=product.description%>
-            <!-- 댓글영역  -->
-            <div>
-                댓글작성하기
-                <form id="commentForm" action="" method="post">
-                    <input type="hidden" name="product_id" value="<%=product.id%>" />
-                    <textarea class="form-control" name="content"></textarea>
-                    <button class="btn btn-primary" style="margin-top: 10px">댓글작성</button>
-                </form>
-            </div>
-            <!-- 댓글영역  -->
-            <hr />
-            <div id="comment_area">
-                <% comments.forEach(function(comment){ %>
-                    <div>
-                        <%=comment.content%>
-                        ( <a class='comment_delete' comment_id='<%=comment.id%>'>삭제</a> )
-                    </div>
-                <% }); %>
-            </div>
         </div>
     </div>
  
     <a href="/admin/products" class="btn btn-default">목록으로</a>
     <a href="/admin/products/edit/<%=product.id%>" class="btn btn-primary">수정</a>
 <% include ../includes/footer.ejs %>
-<script>
-(function(){
-    $(document).ready(function() {
-        $('#commentForm').submit(function(){
-            var $contentVal = $(this).children('textarea[name=content]').val();
-            if($contentVal){
-                $.ajax({
-                    url: '/admin/products/ajax_comment/insert',
-                    type: 'POST',
-                    data: $(this).serialize(),
-                })
-                .done(function(args) {
-                    if(args.message==="success"){
-                        $('#comment_area').append(
-                            '<div>' + args.content +
-                            " ( <a class='comment_delete' comment_id='"+ args.id +"'>삭제</a> ) </div>"
-                        );
-                        $('#commentForm textarea[name=content]').val("");
-                    }
-                })
-                .fail(function(args) {
-                    console.log(args);
-                });
-            }else{
-                alert('댓글 내용을 입력해주세요.')
-            }
-            return false;
-        });
-    });
-})();
-</script>
-<script>
-$(document).on('click' , '.comment_delete' , function(){
-    if(confirm('삭제하시겠습니까?')){ //확인창 예 눌렀을 시만 진행
-        var $self = $(this);
-        $.ajax({
-            url: '/admin/products/ajax_comment/delete',
-            type: 'POST',
-            data: { comment_id : $self.attr('comment_id') },
-        })
-        .done(function() {
-            $self.parent().remove();
-            alert("삭제가 완료되었습니다.");
-        })
-        .fail(function(args) {
-            console.log(args);
-        });
-    }
-});
 </script>

@@ -1,4 +1,74 @@
-<% include ./includes/header.ejs %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!--    <meta http-equiv="X-UA-Compatible" content="ie=edge">-->
+    <title>Give me that</title>
+    <script
+    src="https://code.jquery.com/jquery-3.2.1.min.js"
+    integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+    crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/assets" />
+    <!--bootstrap js 추가 -->
+    <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body class="homepage">
+		<div id="page-wrapper">
+
+			<!-- Header -->
+				<div id="header" style="height: 100vh;">
+
+					<!-- Inner -->
+						<div class="inner">
+							<header>
+								<h1><a href="/" id="logo">Give me that</a></h1>
+								<hr />
+								<p>Do you need money? So get started.</p>
+							</header>
+							<% if(isLogin){%>
+                            <footer>
+                                <a href="/admin/products" class="btn btn-lg btn-danger">Borrow</a>
+                                <a href="/accounts/login" class="btn btn-lg btn-danger">Invest</a>
+							    <a href="/accounts/myroom" class="btn btn-lg btn-danger">MyPage</a>
+				            </footer>
+							<%}else{%>
+							<footer>
+								<a href="" class="btn btn-lg btn-danger" onclick="popup()">log in</a>
+                                <a href="/accounts/join" class="btn btn-lg btn-danger">Regist</a>
+							</footer>
+							<%}%>
+						</div>
+
+					<!-- Nav -->
+						<nav id="nav">
+							<ul>
+								<li><a href="/">Home</a></li>
+								<li>
+									<a href="#">MyCredit</a>
+								</li>
+								<li><a href="/admin/products">Borrow money</a></li>
+								<li><a href="/chat">Chat</a></li><% if(isLogin){%>
+                            <li>
+							    <a href="/accounts/logout" class="" onclick="return confirm('로그아웃 하시겠습니까?')">log out</a>
+				            </li>
+							<%}%>
+							</ul>
+						</nav>
+
+				</div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.dropotron.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/jquery.onvisible.min.js"></script>
+			<script src="assets/js/skel.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
+			<script src="assets/js/main.js"></script>
     <div class="container" id="masonry_container">
         <% products.forEach(function(product){ %>
         <div class="masonry-grid">
@@ -29,5 +99,10 @@
         columnWidth : 270
       });
     });
+    function popup(){
+        var url ="/accounts/login";
+        var name = "popup";
+        window.open(url,name,"width=300,height=250,toolbar=no,status=no,location=no,scrollbars=yes,menubar=no,resizable=yes,left=50,right=50");
+    }
 </script>
 <% include ./includes/footer.ejs %>

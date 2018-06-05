@@ -28,16 +28,6 @@
 								<hr />
 								<p>Do you need money? So get started.</p>
 							</header>
-							<% if(isLogin){%>
-                            <footer>
-							    <a href="/accounts/logout" class="button circled scrolly" onclick="return confirm('로그아웃 하시겠습니까?')">log out</a>
-				            </footer>
-							<%}else{%>
-							<footer>
-								<a href="/accounts/login" class="button circled scrolly">log in</a>
-                                <a href="/accounts/join" class="button circled scrolly">Regist</a>
-							</footer>
-							<%}%>
 						</div>
 
 					<!-- Nav -->
@@ -45,15 +35,22 @@
 							<ul>
 								<li><a href="/">Home</a></li>
 								<li>
-									<a href="/mycredit">MyCredit</a>
-									<ul>
-										<li><a href="#">My Info</a></li>
-										<li><a href="#">Money to pay off</a></li>
-										<li><a href="#">Money to receive</a></li>
-									</ul>
+									<a href="#">MyCredit</a>
 								</li>
 								<li><a href="/admin/products">Borrow money</a></li>
-								<li><a href="/chat">Chat</a></li></li>
+								<li><a href="/chat">Chat</a></li>
+								<% if(isLogin){%>
+                                <li>
+							    <a href="/#" onclick="return confirm('로그아웃 하시겠습니까?')">log out</a>
+							    </li>
+							    <%}else{%>
+							    <li>
+								<a href="/accounts/login" >log in</a>
+                                </li>
+                                <li>
+                                <a href="/accounts/join" scrolly">Regist</a>
+                                </li>
+							<%}%>
 							</ul>
 						</nav>
 

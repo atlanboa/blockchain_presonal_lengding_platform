@@ -20,7 +20,7 @@ db.on('error', console.error);
 db.once('open', function(){
     console.log("mongo db Connection");
 });
-var connect = mongoose.connect('mongodb://127.0.0.1:27017/myDbName', { useMongoClient: true });
+var connect = mongoose.connect('mongodb://127.0.0.1:27017/myDbName',{ useMongoClient: true } );
 autoIncrement.initialize(connect);
 
 //admin module get
@@ -41,9 +41,9 @@ app.use(cookieParser());
 app.use('/uploads', express.static('uploads'));
 
 var sessionMiddleWare = session({
-    secret: 'fastcampus', // 암호화 코드
-    resave: false, // 세션을 언제나 저장할지 정하는 값
-    saveUninitialized: true, // 세션이 저장되기 전에 uninitalized 상태로 미리 만들어 저장
+    secret: 'fastcampus',
+    resave: false,
+    saveUninitialized: true,
     cookie: {
       maxAge: 2000 * 60 * 60 //지속시간 2시간
     },
@@ -52,11 +52,11 @@ var sessionMiddleWare = session({
         ttl: 14 * 24 * 60 * 60
     })
 });
-app.use(sessionMiddleWare); // 세션 활성화
+app.use(sessionMiddleWare);
 
 //passport 적용
-app.use(passport.initialize()); // passport 구동
-app.use(passport.session()); // 세션연결
+app.use(passport.initialize());
+app.use(passport.session());
 
 //플래시 메시지 관련
 app.use(flash());
@@ -76,6 +76,7 @@ app.use('/auth', auth);
 app.use('/chat', chat);
 //Css add
 app.use('/assets',express.static(__dirname+'/assets/css/main.css'));
+app.use('/images',express.static(__dirname+'/assets/css/ie8.css'));
 app.use('/images',express.static(__dirname+'/images'));
 var server = app.listen( port, function(){
     console.log('Express listening on port', port);
@@ -88,3 +89,7 @@ io.use(function(socket, next){
   sessionMiddleWare(socket.request, socket.request.res, next);
 });
 require('./libs/socketConnection')(io);
+
+var webSocket_Server=require('./node/server.js');
+
+webSocket_Server.init();

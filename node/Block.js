@@ -17,8 +17,9 @@ module.exports=class Block{
         this.previousHash = previousHash;
         this.index = index;
         this.hash = this.calculateHash();
+        //@to do
+        //application version variable needs to be added
         
-        //this.nonce = 0; //variable nonce is for mining.
     }
 
     calculateHash() {
