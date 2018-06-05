@@ -41,13 +41,11 @@ passport.deserializeUser(function (user, done) {
  *          1 : 서버 에러
  *          2 : 성공했을 때 return value 
  *          3 : 사용자가 임의로 실패를 만들고 싶을 경우, 일반적으로 에러 메시지 작성 
- *            
- * 
  */
 passport.use(new LocalStrategy({
         usernameField: 'username',
         passwordField : 'password',
-        session : false, //session true 하면 session에 저장되는데?
+        session : true, //session true 하면 session에 저장되는데? //그럼 session 시간은 어떻게 설정하죠?
         passReqToCallback : true //false 하면 콜백 parameter req가 없어짐
     },
     function (req, username, password, done) {
@@ -81,7 +79,7 @@ router.post('/join', function(req, res){
         email : req.body.email
     });
     User.save(function(err){
-        res.send('<script>alert("회원가입 성공");location.href="/#";</script>');
+        res.send('<script>alert("회원가입 성공");location.href="/accounts/login";</script>');
     });
 });
 
@@ -96,7 +94,7 @@ passport.authenticate('local', {
     failureFlash: true 
 }), 
 function(req, res){
-    res.send('<script>opener.document.location.reload();self.close();</script>');
+    res.send('<script>location.href="/";</script>');
 }
 );
 
@@ -107,7 +105,7 @@ router.get('/success', function(req, res){
 
 router.get('/logout', function(req, res){
     req.logout();
-    res.redirect('/');
+    res.redirect('/accounts/login');
 });
 
 module.exports = router;

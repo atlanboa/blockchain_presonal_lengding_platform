@@ -43,28 +43,15 @@ router.get('/products/write',loginRequired, csrfProtection, function(req,res){
 });
 
 router.post('/products/write', upload.single('thumbnail'),loginRequired, csrfProtection, function(req,res){
-    if(req.body.price >= 100000){
-        var product = new ProductsModel({
-        name : req.body.name,
-        credit: req.user.credit,
-        thumbnail : (req.file) ? req.file.filename : "",
-        price : req.body.price,
-        content : req.body.content,
-        interestrate : 2.5,
-        username : req.user.username
-    });
-    }
-    else{
     var product = new ProductsModel({
         name : req.body.name,
+        types: req.body.type,
         credit: req.user.credit,
         thumbnail : (req.file) ? req.file.filename : "",
         price : req.body.price,
-        content : req.body.content,
-        interestrate : req.body.interestrate,
+        description : req.body.description,
         username : req.user.username
     });
-    }
     //이 아래는 수정되지 않았음
     var validationError = product.validateSync();
     if(validationError){
