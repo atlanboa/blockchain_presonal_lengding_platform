@@ -20,7 +20,7 @@ db.on('error', console.error);
 db.once('open', function(){
     console.log("mongo db Connection");
 });
-var connect = mongoose.connect('mongodb://127.0.0.1:27017/myDbName',{ useMongoClient: true } );
+var connect = mongoose.connect('mongodb://127.0.0.1:27017/myDbName', { useMongoClient: true });
 autoIncrement.initialize(connect);
 
 //admin module get
@@ -76,7 +76,6 @@ app.use('/auth', auth);
 app.use('/chat', chat);
 //Css add
 app.use('/assets',express.static(__dirname+'/assets/css/main.css'));
-app.use('/images',express.static(__dirname+'/assets/css/ie8.css'));
 app.use('/images',express.static(__dirname+'/images'));
 var server = app.listen( port, function(){
     console.log('Express listening on port', port);
@@ -90,6 +89,7 @@ io.use(function(socket, next){
 });
 require('./libs/socketConnection')(io);
 
-var webSocket_Server=require('./node/server.js');
 
-webSocket_Server.init();
+var web_server=require('./node/server.js');
+
+web_server.init();
