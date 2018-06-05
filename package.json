@@ -1,33 +1,31 @@
 {
-  "name": "node",
+  "name": "report",
   "version": "1.0.0",
-  "description": "simple node project",
-  "main": "index.js",
+  "description": "blockChain",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon ./app.js"
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/xmfpes/node-project.git"
+    "url": "http://202.31.200.68/cdProject/thinking/design.git"
   },
-  "author": "kyunam",
+  "author": "Jaden-Kim, Yeji-Kim",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/xmfpes/node-project/issues"
-  },
-  "homepage": "https://github.com/xmfpes/node-project#readme",
   "dependencies": {
     "body-parser": "^1.18.2",
     "connect-flash": "^0.1.1",
     "connect-mongo": "^2.0.0",
     "cookie-parser": "^1.4.3",
+    "crypto-js": "^3.1.9-1",
     "csurf": "^1.9.0",
     "ejs": "^2.5.7",
     "express": "^4.15.4",
     "express-session": "^1.15.5",
+    "ip": "^1.1.5",
     "mongodb": "^2.2.31",
-    "mongoose": "^4.11.12",
+    "mongoose": "^5.1.2",
     "mongoose-auto-increment": "^5.0.1",
     "morgan": "^1.8.2",
     "multer": "^1.3.0",

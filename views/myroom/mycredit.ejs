@@ -1,0 +1,40 @@
+<% include ./includes/header.ejs %>
+
+<div class="menu">
+	<div class="menu_title" onclick="location.href='/myroom/'">
+		<img src="http://img2.itemmania.com/images/myroom/img_myroom.gif" width="74" height="47" alt="마이룸">
+	</div>
+	<div class="menu_bd"></div>
+		<div class="menu_sub_title g_black2_b g_button" onclick="location.href='/myroom/pmall/';">포인트몰</div>
+			<div class="menu_sub_title g_black2_b" onclick="$('#menu_sell').slideToggle('slow');">판매관련</div>
+	<ul id="menu_sell" class="g_list">
+		<li class="">
+			<a href="/myroom/sell/sell_regist.html?strRelationType=regist">판매등록 물품</a>
+		</li>
+		<li class="">
+			<a href="/myroom/sell/sell_check.html?strRelationType=check">흥정신청된 물품</a>
+		</li>
+		<li class="">
+			<a href="/myroom/sell/sell_pay_wait.html?strRelationType=pay">입금대기 물품</a>
+		</li>
+		<li class="last ">
+			<a href="/myroom/sell/sell_ing.html?strRelationType=ing">판매중인 물품</a>
+		</li>
+	</ul>
+			<div class="menu_sub_title g_black2_b" onclick="$('#menu_buy').slideToggle('slow');">구매관련</div>
+	<ul id="menu_buy" class="g_list">
+		<li class="">
+			<a href="/myroom/buy/buy_regist.html?strRelationType=regist">구매등록 물품</a>
+		</li>
+		<li class="">
+			<a href="/myroom/buy/buy_check.html?strRelationType=check">흥정신청한 물품</a>
+		</li>
+		<li class="">
+			<a href="/myroom/buy/buy_pay_wait.html?strRelationType=pay">입금해야 할 물품</a>
+		</li>
+		<li class="last ">
+			<a href="/myroom/buy/buy_ing.html?strRelationType=ing">구매중인 물품</a>
+		</li>
+	</ul>
+
+<% include ./includes/footer.ejs %>
