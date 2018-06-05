@@ -81,7 +81,7 @@ router.post('/join', function(req, res){
         email : req.body.email
     });
     User.save(function(err){
-        res.send('<script>alert("회원가입 성공");location.href="/accounts/login";</script>');
+        res.send('<script>alert("회원가입 성공");location.href="/#";</script>');
     });
 });
 
@@ -96,7 +96,7 @@ passport.authenticate('local', {
     failureFlash: true 
 }), 
 function(req, res){
-    res.send('<script>location.href="/";</script>');
+    res.send('<script>opener.document.location.reload();self.close();</script>');
 }
 );
 
@@ -107,7 +107,7 @@ router.get('/success', function(req, res){
 
 router.get('/logout', function(req, res){
     req.logout();
-    res.redirect('/accounts/login');
+    res.redirect('/');
 });
 
 module.exports = router;

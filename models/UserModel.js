@@ -5,7 +5,7 @@ var UserSchema = new Schema({
   username : {
       type : String,
       required: [true, '아이디는 필수입니다.'],
-      unique : true
+      unique: true
   },
   password : {
       type : String,
