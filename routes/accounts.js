@@ -45,7 +45,7 @@ passport.deserializeUser(function (user, done) {
 passport.use(new LocalStrategy({
         usernameField: 'username',
         passwordField : 'password',
-        session : true, //session true 하면 session에 저장되는데? //그럼 session 시간은 어떻게 설정하죠?
+        session : true,
         passReqToCallback : true //false 하면 콜백 parameter req가 없어짐
     },
     function (req, username, password, done) {
