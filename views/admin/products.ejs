@@ -24,9 +24,7 @@
                 <%=product.interestrate%> %
             </td>
             <td>
-                <%=product.getDate.year%> -
-                <%=product.getDate.month%> -
-                <%=product.getDate.day%>
+                <%=product.repaymentDate%> 일
             </td>
             <td>
                 <%=product.username%>
@@ -34,11 +32,13 @@
         </tr>
         <% }); %>
     </table>
+    <div align="right">
     <% if(isLogin){%>
     <a href="/admin/products/write" class="btn btn-default">작성하기</a>
 	<%}else{%>
 	<a onclick="popup()" class="btn btn-default">작성하기</a>
 	<%}%>
+	</div>
  </div>
  <script type="text/javascript">
     function popup(){

@@ -14,11 +14,20 @@ var ProductsSchema = new Schema({
         type : Number,
         required: [true, '빌려줄 금액을 입력하세요']
     },
-    interestrate:{
+    interestrate:{ // 이자율
         type : Number,
         required: [true, '이자율 을 입력하세요']
     },
+    interDate:{   // 이자 (연/월/주/일)
+        type : String,
+        required: [true, '연/월/주/일 을 입력하세요']
+    },
+    preference: String, // 우대조건
     content : String, // 내용
+    repaymentDate : {
+        type: Number,
+        required : [true, '상환일을 입력하세요']
+    },
     created_at : { //작성일
         type : Date,
         default : Date.now()

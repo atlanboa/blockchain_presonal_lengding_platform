@@ -102,10 +102,13 @@ router.get('/success', function(req, res){
     res.send(req.user);
 });
 
-
 router.get('/logout', function(req, res){
     req.logout();
     res.redirect('/');
+});
+
+router.get('/myroom', function(req,res){
+    
 });
 
 module.exports = router;
