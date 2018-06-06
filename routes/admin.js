@@ -96,7 +96,7 @@ router.get('/products/edit/:id',loginRequired, csrfProtection, function(req, res
 });
 
 router.post('/products/edit/:id',loginRequired, upload.single('thumbnail') , csrfProtection, function(req, res){
-    //그전에 지정되 있는 파일명을 받아온다
+    //그전에 지정되어 있는 파일명을 받아온다
     ProductsModel.findOne( {id : req.params.id} , function(err, product){
         //아래의 코드만 추가되면 된다.
         if(req.file && product.thumbnail){  //요청중에 파일이 존재 할시 이전이미지 지운다.
@@ -140,6 +140,16 @@ router.post('/products/ajax_comment/delete', function(req, res){
     CommentsModel.remove({ id : req.body.comment_id } , function(err){
         res.json({ message : "success" });
     });
+});
+
+router.post('products/makeTransactions/:product',(req,res)=>{
+    var product=req.params.product;
+    var Transaction=require('../node/Transaction.js');
+    /** @todo model/ProductModel.js 가 업데이트 되면 Transaction 부분 Date 없애기 */
+    var newTransaction=new Transaction(product.username, req.user.username, product.price, new Date(), product.interestrate);
+
+
+    
 });
 
 module.exports = router;
