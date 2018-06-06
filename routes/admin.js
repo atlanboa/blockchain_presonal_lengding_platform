@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var ProductsModel = require('../models/ProductsModel');
 var CommentsModel = require('../models/CommentsModel');
+var UserModel =require('../models/UserModel');
 var csrf = require('csurf');
 var csrfProtection = csrf({ cookie: true });
 var loginRequired = require('../libs/loginRequired');
@@ -43,15 +44,28 @@ router.get('/products/write',loginRequired, csrfProtection, function(req,res){
 });
 
 router.post('/products/write', upload.single('thumbnail'),loginRequired, csrfProtection, function(req,res){
-    var product = new ProductsModel({
+    if(req.body.price >= 100000){
+        var product = new ProductsModel({
         name : req.body.name,
-        types: req.body.type,
         credit: req.user.credit,
         thumbnail : (req.file) ? req.file.filename : "",
         price : req.body.price,
-        description : req.body.description,
+        content : req.body.content,
+        interestrate : 2.5,
         username : req.user.username
     });
+    }
+    else{
+    var product = new ProductsModel({
+        name : req.body.name,
+        credit: req.user.credit,
+        thumbnail : (req.file) ? req.file.filename : "",
+        price : req.body.price,
+        content : req.body.content,
+        interestrate : req.body.interestrate,
+        username : req.user.username
+    });
+    }
     //이 아래는 수정되지 않았음
     var validationError = product.validateSync();
     if(validationError){
@@ -69,7 +83,7 @@ router.get('/products/detail/:id' , function(req, res){
     ProductsModel.findOne( { 'id' :  req.params.id } , function(err ,product){
         //제품정보를 받고 그안에서 댓글을 받아온다.
         CommentsModel.find({ product_id : req.params.id } , function(err, comments){
-            res.render('admin/productsDetail', { product: product , comments : comments });
+            res.render('admin/productsDetail', { product: product , user: req.user, comments : comments });
         });        
     });
 });
