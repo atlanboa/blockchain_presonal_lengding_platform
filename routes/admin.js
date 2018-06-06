@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var ProductsModel = require('../models/ProductsModel');
 var CommentsModel = require('../models/CommentsModel');
+var UserModel =require('../models/UserModel');
 var csrf = require('csurf');
 var csrfProtection = csrf({ cookie: true });
 var loginRequired = require('../libs/loginRequired');
@@ -82,7 +83,7 @@ router.get('/products/detail/:id' , function(req, res){
     ProductsModel.findOne( { 'id' :  req.params.id } , function(err ,product){
         //제품정보를 받고 그안에서 댓글을 받아온다.
         CommentsModel.find({ product_id : req.params.id } , function(err, comments){
-            res.render('admin/productsDetail', { product: product , comments : comments });
+            res.render('admin/productsDetail', { product: product , user: req.user, comments : comments });
         });        
     });
 });
