@@ -6,6 +6,7 @@
  * @param {Integer} money Money
  * @param {Date} dueDate date
  * @param {Integer} rate 이자율
+ * @param {Boolean} status true/ false
  * @description Transaction Class. uasge: const transaction = new Transaction(creditor, debtor, money, date, rate)
  */
 module.exports=class Transaction{
@@ -15,6 +16,11 @@ module.exports=class Transaction{
         this.money = money;
         this.dueDate = date;
         this.rate = rate;
+        this.statuas = false;
+    }
+
+    repayment(){
+        this.status = true;
     }
 
     /**
