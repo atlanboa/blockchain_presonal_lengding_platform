@@ -75,6 +75,7 @@ app.use('/chat', chat);
 //Css add
 app.use('/assets',express.static(__dirname+'/assets/css/main.css'));
 app.use('/images',express.static(__dirname+'/images'));
+
 var server = app.listen( port, function(){
     console.log('Express listening on port', port);
 });

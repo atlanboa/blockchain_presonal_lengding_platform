@@ -10,7 +10,7 @@
  * @description Transaction Class. uasge: const transaction = new Transaction(creditor, debtor, money, date, rate)
  */
 module.exports=class Transaction{
-    constructor(creditor, debtor, money, date){
+    constructor(creditor, debtor, money, date,rate){
         this.creditor = creditor;
         this.debtor = debtor;
         this.money = money;
