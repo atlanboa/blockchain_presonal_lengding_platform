@@ -52,6 +52,9 @@ router.post('/products/write', upload.single('thumbnail'),loginRequired, csrfPro
         price : req.body.price,
         content : req.body.content,
         interestrate : 2.5,
+        interDate: req.body.interDate,
+        preference: req.body.preference,
+        repaymentDate:req.body.repaymentDate,
         username : req.user.username
     });
     }
@@ -63,6 +66,9 @@ router.post('/products/write', upload.single('thumbnail'),loginRequired, csrfPro
         price : req.body.price,
         content : req.body.content,
         interestrate : req.body.interestrate,
+        interDate: req.body.interDate,
+        preference: req.body.preference,
+        repaymentDate:req.body.repaymentDate,
         username : req.user.username
     });
     }
@@ -141,5 +147,9 @@ router.post('/products/ajax_comment/delete', function(req, res){
         res.json({ message : "success" });
     });
 });
+router.get('/products/makeTranjaction/:product',function(req, res){
+    console.log(req.params.product);
+    console.log(req.user.username);
+})
 
 module.exports = router;

@@ -2,13 +2,13 @@
    <div style="padding: 2%;">
     <form action="" method="post" enctype="multipart/form-data">
         <input type="hidden" name="_csrf" value="<%=csrfToken%>" />
-        <table class="table table-bordered">
+        <table class="table table-striped table-bordered table-hover table-condensed">
             <tr>
-                <th>제목</th>
+                <th style="text-align:center;">제목</th>
                 <td><input type="text" name="name" class="form-control"  value="<%=product.name%>"/></td>
             </tr>
             <tr>
-                <th>섬네일</th>
+                <th style="text-align:center;">섬네일</th>
                 <td>
                     <input type="file" name="thumbnail" />
                     <% if(product.thumbnail){ %>
@@ -17,23 +17,37 @@
                 </td>
             </tr>
             <tr>
-                <th>대출가능 금액</th>
-                <td><input type="number" name="price" class="form-control" value="<%=product.price%>"/></td>
+                <th style="text-align:center;">대출가능 금액</th>
+                <td><input type="number" name="price" class="form-control" value="<%=product.price%>"/>
+                </td>
             </tr>
             <tr>
-                <th>이자율</th>
-                <td><input type="number" placeholder="10만원 이상 이자율은 2.5%로 고정입니다." name="interestrate" class="form-control" value="<%=product.interestrate%>" step="0.1"/></td>
+                <th style="text-align:center;">이자율</th>
+                <td><input type="number" placeholder="10만원 이상 이자율은 2.5%로 고정입니다." name="interestrate" class="form-control" value="<%=product.interestrate%>" step="0.1"/>
+                <label class="radio-inline"><input type="radio" name="interDate" value="연">연(year)</label>
+                <label class="radio-inline"><input type="radio" name="interDate" value="달">달(month)</label>
+                <label class="radio-inline"><input type="radio" name="interDate" value="주">주(week)</label>
+                <label class="radio-inline"><input type="radio" name="interDate" value="일">일(day)</label>
+                </td>
             </tr>
             <tr>
-                <th>내용</th>
-                <td><input type="text" name="content" class="form-control" value="<%=product.content%>"/></td>
+                <th style="text-align:center;">우대 조건</th>
+                <td><input type="text" name="preference" class="form-control" value="<%=product.preference%>"/></td>
             </tr>
             <tr>
-                <th>상환 기한</th>
-                <td><input type="date" name="description" class="form-control" value="<%=product.date%>"/></td>
+                <th style="text-align:center;">상환 기한</th>
+                <td><input style="width:10%;" type="number" name="repaymentDate" value="<%=product.repaymentDate%>"/>일</td>
+            </tr>
+            <tr>
+                <th style="text-align:center;">내용</th>
+                <td>
+                <input style="min-height:200px;" type="text" name="content" class="form-control" value="<%=product.content%>"/>
+                </td>
             </tr>
         </table>
+        <div align="right">
         <button class="btn btn-primary">작성하기</button>
+        </div>
     </form>
 </div>
 <% include ../includes/footer.ejs %>

@@ -12,7 +12,7 @@
             <a style="font-size:110%" class="btn-info btn-sm"><%=product.credit%></a> 
             </td>
             <td>
-            <%=product.username%>
+                <%=product.username%>
             </td>
             </table>
         </div>
@@ -40,7 +40,7 @@
                 우대조건 : 
                 </td>
                 <td>
-                우대조건 내용
+                <%=product.preference%>
                 </td>
                 </tr>
                 <tr>
@@ -48,9 +48,7 @@
                 상환일 : 
                </td>
                 <td>
-                <%=product.getDate.year%> - 
-                <%=product.getDate.month%> - 
-                <%=product.getDate.day%>
+                <%=product.repaymentDate%> 일
                 </td>
                 </tr>
                 <tr class="panel panel-default">
@@ -71,9 +69,9 @@
     <% if(product.username == user.username){%>    
     <a href="/admin/products/edit/<%=product.id%>" class="btn btn-primary">수정</a>
     <%}else{%>
-    <a href="" class="btn btn-primary">거래 신청</a>
+    <a href="/admin/products/makeTranjaction/<%=product%>" class="btn btn-primary">거래 신청</a>
     <%}%>
-    <a href="/admin/products" class="btn btn-default">목록으로</a>
+    <a href="/admin/products/" class="btn btn-default">목록으로</a>
     </div>
     </div>
 <% include ../includes/footer.ejs %>
