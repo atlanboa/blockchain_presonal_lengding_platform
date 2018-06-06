@@ -13,7 +13,7 @@ var wss = new WebSocket.Server({ port:8889 });
  * @namespace {Object} client
  * @example
  * client=[ { IP:String, Port:Integer},... ]
- * @namespace {BlockChain} blockchain
+ * @namespace {BlockChain} global.blockchain
  * @description server가 가질 chain 변수 이름
  */
 let client=[]; //save client ip and port
@@ -144,9 +144,11 @@ module.exports.init=function(){
         }
     },3000);
     
-    setTimeout(()=>{
+    //temp block
+    /*setTimeout(()=>{
+        
         global.blockchain.createTransaction(new Transaction('aa','bb',10000));
         console.log('132, Make new Transactions!');
-    },5000);
+    },5000);*/
 
 }
