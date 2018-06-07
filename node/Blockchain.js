@@ -60,6 +60,25 @@ module.exports = class Blockchain {
         console.log('60 Blockchain.js : Chain : ',this.chain);
         
     }
+    // makeBAR(){
+    //     let block = this.getLatestBlock();
+    //     var BAR ={};
+    //     BAR.Format = 'BAR';
+    //     BAR.Data = {};
+    //     BAR.Data.Status = 'Success';
+    //     BAR.Block = {};
+    //     BAR.Block.Timestamp = block.timestamp;
+    //     BAR.Block.Transactions = block.transactions;
+    //     BAR.Block.PreviousHash = block.previousHash;
+    //     BAR.Block.Hash = block.hash;
+    //     BAR.Block.Index = block.index;
+    //     return BAR;
+    // }
+    appendingBlock_server_chain(msg){
+        this.chain.push(new Block(msg.Block.Timestamp, msg.Block.Transactions,
+        msg.Block.PreviousHash, msg.Block.Index));
+
+    }
 
     /**
      * @description 체인에서 관련 된 유저의 Trasaction을 반환합니다.
@@ -124,11 +143,17 @@ module.exports = class Blockchain {
         return VBR;
     }
     makeBAR(){
+        let block = this.getLatestBlock();
         var BAR ={};
         BAR.Format = 'BAR';
         BAR.Data = {};
         BAR.Data.Status = 'Success';
-        BAR.Data.Info = 'None'
+        BAR.Block = {};
+        BAR.Block.PreviousHash = block.previousHash;
+        BAR.Block.Timestamp = block.timestamp;
+        BAR.Block.Transactions = block.transactions;
+        BAR.Block.Hash = block.hash;
+        BAR.Block.Index = block.index;
         return BAR;
     }
     makeBDS() {
@@ -257,6 +282,13 @@ module.exports = class Blockchain {
         arr.forEach(ele=>{
             this.pendingTransactions.push(new Transaction(ele.creditor,ele.debtor,ele.money,ele.transactions.duedate,ele.transactions.rate, ele.transactions.status));
         })
+    }
+
+    changeDate_to_DueDate(days){
+        var t = new Date();
+        t.setDate(t.getDate()+days);
+        var options={year:'numeric',month:'2-digit', day:'2-digit'};
+        return k.toLocaleDateString('ko-KR',options);
     }
 
 

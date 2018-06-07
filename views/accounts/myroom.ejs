@@ -85,11 +85,11 @@
         </div>
 
 
-        <script type="text/javascript">
-            function popup() {
-                var url = "/accounts/charge/<%=user.id%>";
-                var name = "popup";
-                window.open(url, name, "width=300,height=280,toolbar=no,status=no,location=no,scrollbars=yes,menubar=no,resizable=yes,left=50,right=50");
-            }
-        </script>
-        <% include ../includes/footer.ejs %>
+<script type="text/javascript">
+    function popup() {
+        var url = "/accounts/charge/<%=user.id%>";
+        var name = "popup";
+        window.open(url, name, "width=300,height=280,toolbar=no,status=no,location=no,scrollbars=yes,menubar=no,resizable=yes,left=50,right=50");
+    }
+</script>
+<% include ../includes/footer.ejs %>

@@ -154,11 +154,11 @@ router.post('/products/ajax_comment/delete', function(req, res){
 
 router.post('products/makeTransactions/:product',(req,res)=>{
     var product=req.params.product;
+    var blockchain=requrie('../global.js').blockchain; //server blockchain
     var Transaction=require('../node/Transaction.js');
     /** @todo model/ProductModel.js 에서 상환 일 업데이트 되면 Transaction 부분 Date 없애기 */
-    var newTransaction=new Transaction(product.username, req.user.username, product.price, new Date(), product.interestrate);
+    var newTransaction=new Transaction(product.username, req.user.username, product.price, blockchain.changeDate_to_DueDate(product.interDate), product.interestrate);
 
-    var blockchain=requrie('../global.js').blockchain;
     blockchain.createTransaction(newTransaction);
 
 });
