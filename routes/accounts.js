@@ -45,7 +45,7 @@ passport.deserializeUser(function (user, done) {
 passport.use(new LocalStrategy({
         usernameField: 'username',
         passwordField : 'password',
-        session : true, //session true 하면 session에 저장되는데? //그럼 session 시간은 어떻게 설정하죠?
+        session : true,
         passReqToCallback : true //false 하면 콜백 parameter req가 없어짐
     },
     function (req, username, password, done) {
@@ -79,7 +79,7 @@ router.post('/join', function(req, res){
         email : req.body.email
     });
     User.save(function(err){
-        res.send('<script>alert("회원가입 성공");location.href="/accounts/login";</script>');
+        res.send('<script>alert("회원가입 성공");location.href="/#";</script>');
     });
 });
 
@@ -94,7 +94,7 @@ passport.authenticate('local', {
     failureFlash: true 
 }), 
 function(req, res){
-    res.send('<script>location.href="/";</script>');
+    res.send('<script>opener.document.location.reload();self.close();</script>');
 }
 );
 
@@ -102,10 +102,13 @@ router.get('/success', function(req, res){
     res.send(req.user);
 });
 
-
 router.get('/logout', function(req, res){
     req.logout();
-    res.redirect('/accounts/login');
+    res.redirect('/');
+});
+
+router.get('/myroom', function(req,res){
+    
 });
 
 module.exports = router;

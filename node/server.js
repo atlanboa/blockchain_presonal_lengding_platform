@@ -4,6 +4,7 @@
 */
 var WebSocket = require('ws');
 //const debug=require('./makedebuglog.js').debug_error();
+var global=require('./global.js');
 var BlockChain=require('./Blockchain.js');
 var Transaction=require('./Transaction.js');
 var wss = new WebSocket.Server({ port:8889 });
@@ -12,12 +13,12 @@ var wss = new WebSocket.Server({ port:8889 });
  * @namespace {Object} client
  * @example
  * client=[ { IP:String, Port:Integer},... ]
- * @namespace {BlockChain} blockchain
+ * @namespace {BlockChain} global.blockchain
  * @description server가 가질 chain 변수 이름
  */
 let client=[]; //save client ip and port
 
-var blockchain=new BlockChain();
+global.blockchain = new BlockChain();
 //new Blockchain해주면 genesis Block은 기본으로 생성됨.
 //Blockchain.js constructor 확인해봐
 // blockchain.createGenesisBlock();
@@ -123,7 +124,7 @@ module.exports.init=function(){
     },2000);
     
     const interval2=setInterval(()=>{
-        if(blockchain.pendingTransactions.length >= 1 && client.length!=0){
+        if(global.blockchain.pendingTransactions.length >= 1 && client.length!=0){
             var random_int=Math.floor(Math.random()*client.length);
             var iter=wss.clients.values(); //type Set
         
@@ -137,15 +138,17 @@ module.exports.init=function(){
                         "Status": "Confirm",
                         "Info": "None",
                 },
-                Transaction:blockchain.pendingTransactions.shift(),
+                Transaction:global.blockchain.pendingTransactions.shift(),
             }));
             console.log('126, Send CCR to',client[random_int].IP,':',client[random_int].Port);
         }
     },3000);
     
-    setTimeout(()=>{
-        blockchain.createTransaction(new Transaction('aa','bb',10000));
+    //temp block
+    /*setTimeout(()=>{
+        
+        global.blockchain.createTransaction(new Transaction('aa','bb',10000));
         console.log('132, Make new Transactions!');
-    },5000);
+    },5000);*/
 
 }

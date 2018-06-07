@@ -26,7 +26,6 @@ autoIncrement.initialize(connect);
 //admin module get
 var admin = require('./routes/admin');
 var accounts = require('./routes/accounts');
-var auth = require('./routes/auth');
 var home = require('./routes/home.js');
 var chat = require('./routes/chat')
 var connectMongo = require('connect-mongo');
@@ -72,11 +71,11 @@ app.use(function(req, res, next) {
 app.use('/', home);
 app.use('/admin', admin);
 app.use('/accounts', accounts);
-app.use('/auth', auth);
 app.use('/chat', chat);
 //Css add
 app.use('/assets',express.static(__dirname+'/assets/css/main.css'));
 app.use('/images',express.static(__dirname+'/images'));
+
 var server = app.listen( port, function(){
     console.log('Express listening on port', port);
 });

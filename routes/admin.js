@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var ProductsModel = require('../models/ProductsModel');
 var CommentsModel = require('../models/CommentsModel');
+var UserModel =require('../models/UserModel');
 var csrf = require('csurf');
 var csrfProtection = csrf({ cookie: true });
 var loginRequired = require('../libs/loginRequired');
@@ -43,15 +44,34 @@ router.get('/products/write',loginRequired, csrfProtection, function(req,res){
 });
 
 router.post('/products/write', upload.single('thumbnail'),loginRequired, csrfProtection, function(req,res){
-    var product = new ProductsModel({
+    if(req.body.price >= 100000){
+        var product = new ProductsModel({
         name : req.body.name,
-        types: req.body.type,
         credit: req.user.credit,
         thumbnail : (req.file) ? req.file.filename : "",
         price : req.body.price,
-        description : req.body.description,
+        content : req.body.content,
+        interestrate : 2.5,
+        interDate: req.body.interDate,
+        preference: req.body.preference,
+        repaymentDate:req.body.repaymentDate,
         username : req.user.username
     });
+    }
+    else{
+    var product = new ProductsModel({
+        name : req.body.name,
+        credit: req.user.credit,
+        thumbnail : (req.file) ? req.file.filename : "",
+        price : req.body.price,
+        content : req.body.content,
+        interestrate : req.body.interestrate,
+        interDate: req.body.interDate,
+        preference: req.body.preference,
+        repaymentDate:req.body.repaymentDate,
+        username : req.user.username
+    });
+    }
     //이 아래는 수정되지 않았음
     var validationError = product.validateSync();
     if(validationError){
@@ -69,7 +89,7 @@ router.get('/products/detail/:id' , function(req, res){
     ProductsModel.findOne( { 'id' :  req.params.id } , function(err ,product){
         //제품정보를 받고 그안에서 댓글을 받아온다.
         CommentsModel.find({ product_id : req.params.id } , function(err, comments){
-            res.render('admin/productsDetail', { product: product , comments : comments });
+            res.render('admin/productsDetail', { product: product , user: req.user, comments : comments });
         });        
     });
 });
@@ -82,7 +102,7 @@ router.get('/products/edit/:id',loginRequired, csrfProtection, function(req, res
 });
 
 router.post('/products/edit/:id',loginRequired, upload.single('thumbnail') , csrfProtection, function(req, res){
-    //그전에 지정되 있는 파일명을 받아온다
+    //그전에 지정되어 있는 파일명을 받아온다
     ProductsModel.findOne( {id : req.params.id} , function(err, product){
         //아래의 코드만 추가되면 된다.
         if(req.file && product.thumbnail){  //요청중에 파일이 존재 할시 이전이미지 지운다.
@@ -126,6 +146,21 @@ router.post('/products/ajax_comment/delete', function(req, res){
     CommentsModel.remove({ id : req.body.comment_id } , function(err){
         res.json({ message : "success" });
     });
+});
+router.get('/products/makeTranjaction/:product',function(req, res){
+    console.log(req.params.product);
+    console.log(req.user.username);
+})
+
+router.post('products/makeTransactions/:product',(req,res)=>{
+    var product=req.params.product;
+    var Transaction=require('../node/Transaction.js');
+    /** @todo model/ProductModel.js 에서 상환 일 업데이트 되면 Transaction 부분 Date 없애기 */
+    var newTransaction=new Transaction(product.username, req.user.username, product.price, new Date(), product.interestrate);
+
+    var blockchain=requrie('../global.js').blockchain;
+    blockchain.createTransaction(newTransaction);
+
 });
 
 module.exports = router;
