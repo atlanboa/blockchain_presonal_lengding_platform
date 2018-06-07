@@ -267,11 +267,7 @@ function getRandomInt(min, max) { //min ~ max 사이의 임의의 정수 반환
     return Math.floor(Math.random() * (max - min)) + min;
 }
 
-function changeDate_to_MyDate(){
-    var t = new Date();
-    var options={year:'numeric',month:'2-digit', day:'2-digit'};
-    return k.toLocaleDateString('ko-KR',options);
-}
+
 
 
 /**main */

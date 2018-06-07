@@ -151,9 +151,16 @@ router.post('/products/ajax_comment/delete', function(req, res){
         res.json({ message : "success" });
     });
 });
-router.get('/products/makeTranjaction/:product',function(req, res){
-    console.log(req.params.product);
-    console.log(req.user.username);
-})
+
+router.post('products/makeTransactions/:product',(req,res)=>{
+    var product=req.params.product;
+    var blockchain=requrie('../global.js').blockchain;
+    var Transaction=require('../node/Transaction.js');
+    /** @todo model/ProductModel.js 에서 상환 일 업데이트 되면 Transaction 부분 Date 없애기 */
+    var newTransaction=new Transaction(product.username, req.user.username, product.price, blockchain.changeDate_to_DueDate(product.interDate), product.interestrate);
+
+    blockchain.createTransaction(newTransaction);
+
+});
 
 module.exports = router;
