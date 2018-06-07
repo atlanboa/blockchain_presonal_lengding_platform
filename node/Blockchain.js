@@ -61,6 +61,28 @@ module.exports = class Blockchain {
         
     }
 
+    /**
+     * @description 체인에서 관련 된 유저의 Trasaction을 반환합니다.
+     * @return {Object} { creditor_list:Array, debtor_list:Array }
+     * @param {String} userName 
+     */
+    findTransaction(userName) {
+        var transaction_creditor = [];
+        var transaction_debtor = [];
+        this.chain.find(ele => {
+            var tt = ele.getTransaction();
+            if (tt.getCreditor() == userName) {
+                transaction_creditor.push(tt);
+            } else if (tt.getDebtor() == userName) {
+                transaction_debtor.push(tt);
+            }
+        });
+        var k={ 
+            creditor_list:transaction_creditor,
+            debtor_list:transaction_debtor,
+        }
+        return k;
+    }
     verifyBlock() {
         let previousblock = this.getLatestBlock();
         console.log('66 Blockchain.js Hash Result Comparing : ', this.tempBlock.previousHash, ' , ',previousblock.calculateHash());
