@@ -262,7 +262,7 @@ module.exports = class Blockchain {
         })
     }
 
-    changeDate_to_MyDate(days){
+    changeDate_to_DueDate(days){
         var t = new Date();
         t.setDate(t.getDate()+days);
         var options={year:'numeric',month:'2-digit', day:'2-digit'};
