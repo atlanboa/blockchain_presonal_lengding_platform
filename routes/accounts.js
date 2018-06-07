@@ -72,6 +72,7 @@ router.post('/join', function(req, res){
         username : req.body.username,
         password : passwordHash(req.body.password),
         displayname : req.body.displayname,
+        nickname : req.body.nickname,
         birth1: req.body.birth1,
         birth2: req.body.birth2,
         birth3: req.body.birth3,
@@ -108,7 +109,27 @@ router.get('/logout', function(req, res){
 });
 
 router.get('/myroom', function(req,res){
-    
+    res.render('accounts/myroom', { flashMessage : req.flash().error, user:req.user });
+});
+
+router.get('/charge/:id',function(req,res){
+    res.render('accounts/charge', { flashMessage : req.flash().error});
+});
+router.post('/charge/:id',function(req,res){
+    UserModel.findOne( {id : req.params.id} , function(err, user){
+        if(!user){
+            console.log(req.body.chargemoney);
+        }
+        else{
+            req.user.money=user.money+Number(req.body.chargemoney);
+            var query = {
+                money:user.money+Number(req.body.chargemoney)
+            };
+            UserModel.update({ id : req.params.id }, { $set : query }, function(err){
+                res.send('<script>opener.document.location.reload();self.close();</script>');
+            });
+        }
+    });
 });
 
 module.exports = router;
