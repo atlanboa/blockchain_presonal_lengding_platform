@@ -53,7 +53,7 @@ wss.on('connection',function(ws,req){
 
 
 /**WebServer_ws 와 연결하는 부분 */
-var connect_server = function(){ 
+module.exports.connect_server = function(){ 
     ws.on('open',function(){
         console.log('33: Connect with Web_server_wss');
         var IAP={};
@@ -173,8 +173,8 @@ let client_recv=function(message){ //ws 에 붙어야 함.
             blockchain.count = blockchain.count + 1;
             let len=client.length;   
             let n = len - parseInt((len-1)/3); //최소 n개의 valid-verifying이 있어야됨.
-            //@todo
-            if((blockchain.count >= n)&&(blockchain.count_state == true)){
+            if(/*(blockchain.count >= n)&&*/(blockchain.count_state == true)){
+                //consider pass to check transactions
                 //n개 이상의 node가 블록을 수신했으면 검증 결과 배포
                 console.log('174 : start verfiying');
                 verifiedResult();
@@ -189,9 +189,8 @@ let client_recv=function(message){ //ws 에 붙어야 함.
             console.log('201 : verify : ',blockchain.verify);
             let len=client.length;
             let n = len - parseInt((len-1)/3); //최소 n개의 valid-verifying이 있어야됨.
-         
-            //@todo
-            if(blockchain.verify >= n){
+            if(/*blockchain.verify >= n*/true){ 
+                //consider pass to check transactions
                 //n개 이상의 node가 블록이 valid하다고 했을때
                 console.log('194 : start appendingBlock');
                 blockchain.appendingBlock();
@@ -250,5 +249,5 @@ function changeDate_to_MyDate(){
 
 
 /**main */
-connect_server();
+//connect_server();
 // test_sendBlock();

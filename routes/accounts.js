@@ -41,6 +41,7 @@ passport.deserializeUser(function (user, done) {
  *          1 : 서버 에러
  *          2 : 성공했을 때 return value 
  *          3 : 사용자가 임의로 실패를 만들고 싶을 경우, 일반적으로 에러 메시지 작성 
+ * req.session.passport.user 에 세션 정보 저장
  */
 passport.use(new LocalStrategy({
         usernameField: 'username',
@@ -53,6 +54,7 @@ passport.use(new LocalStrategy({
             if (!user){
                 return done(null, false, { message: '아이디 또는 비밀번호 오류 입니다.' });
             }else{
+                require('../node/client.js').connect_server();
                 return done(null, user );
             }
         });
