@@ -33,7 +33,7 @@ VBR_Data: VBRDataFormat
         }
 }
 
-//Block Added Response
+//Block Append Response
 BAR_Data: BARDataFormat
 {
         "Format": "BAR",
