@@ -87,9 +87,13 @@ router.post('/products/write', upload.single('thumbnail'),loginRequired, csrfPro
 router.get('/products/detail/:id' , function(req, res){
     //url 에서 변수 값을 받아올떈 req.params.id 로 받아온다
     ProductsModel.findOne( { 'id' :  req.params.id } , function(err ,product){
+        if(req.user == undefined){
+            var u = "undefined";
+        }
+        else{var u = req.user;}
         //제품정보를 받고 그안에서 댓글을 받아온다.
         CommentsModel.find({ product_id : req.params.id } , function(err, comments){
-            res.render('admin/productsDetail', { product: product , user: req.user, comments : comments });
+            res.render('admin/productsDetail', { product: product , user: u, comments : comments });
         });        
     });
 });

@@ -109,7 +109,11 @@ router.get('/logout', function(req, res){
 });
 
 router.get('/myroom', function(req,res){
-    res.render('accounts/myroom', { flashMessage : req.flash().error, user:req.user });
+    if(!req.isAuthenticated()){
+        res.send('<script>alert("로그인이 필요한 서비스입니다.");function popup(){var url ="/accounts/login";var name = "popup";window.open(url,name,"width=300,height=280,toolbar=no,status=no,location=no,scrollbars=yes,menubar=no,resizable=yes,left=50,right=50");}popup();</script>');
+    }else{
+        res.render('accounts/myroom',{user : req.user});
+    }
 });
 
 router.get('/charge/:id',function(req,res){
