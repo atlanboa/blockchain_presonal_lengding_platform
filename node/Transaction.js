@@ -19,7 +19,12 @@ module.exports=class Transaction{
         this.rate_type=rate_type;
         this.statuas = false;
     }
-
+    getCreditor(){
+        return this.creditor;
+    }
+    getDebtor(){
+        return this.debtor;
+    }
 
     repayment(){
         this.status = true;
