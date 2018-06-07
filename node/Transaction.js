@@ -20,6 +20,7 @@ module.exports=class Transaction{
         this.statuas = false;
     }
 
+
     repayment(){
         this.status = true;
     }
@@ -30,7 +31,7 @@ module.exports=class Transaction{
      */
     APRtoMPR(){
         rate=rate/12;
-    }
+    }   
     MPRtoAPR(){
         rate=rate*12;
     }

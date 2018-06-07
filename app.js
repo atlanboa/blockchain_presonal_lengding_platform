@@ -27,7 +27,7 @@ autoIncrement.initialize(connect);
 var admin = require('./routes/admin');
 var accounts = require('./routes/accounts');
 var home = require('./routes/home.js');
-var chat = require('./routes/chat')
+var chat = require('./routes/chat');
 var connectMongo = require('connect-mongo');
 var MongoStore = connectMongo(session);
  

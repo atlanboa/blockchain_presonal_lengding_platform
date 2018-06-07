@@ -6,11 +6,12 @@ var UserSchema = new Schema({
       type : String,
       required: [true, '아이디는 필수입니다.'],
       unique : true
-  },
+  }, 
   password : {
       type : String,
       required: [true, '패스워드는 필수입니다.']
   },
+  nickname: String,
   displayname : String,
   birth1: {
       type: String,
@@ -29,6 +30,10 @@ var UserSchema = new Schema({
       required: [true, '성별은 필수입니다.']
   },
   email: String,
+  money: {
+      type: Number,
+      default : '0'
+  },
   credit: {
       type: String,
       default : 5

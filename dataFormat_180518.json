@@ -90,6 +90,9 @@ TRD:Transaction Data
                 Creditor:,
                 Debtor:,
                 Money:,
+                DueDate:,
+                Rate:,
+                Status:,
         }],
 }
 
