@@ -19,4 +19,4 @@ var BankSchema = new Schema({
 });
 
 BankSchema.plugin(autoIncrement.plugin, { model: "bank", field: "id", startAt: 1 });
-module.exports = mongoose.model('user', BankSchema);
+module.exports = mongoose.model('bank', BankSchema);

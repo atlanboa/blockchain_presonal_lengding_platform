@@ -72,15 +72,6 @@ module.exports = class Blockchain {
             return false;
         }
     }
-
-    makeCCR(){
-        var CCR = {};
-        CCR.Format = 'CCR';
-        CCR.Data ={};
-        CCR.Data.Status = 'Confirm';
-        CCR.Data.Info = 'None';
-        return CCR;
-    }
     makeBRR(){
         var BRR ={};
         BRR.Format = 'BRR';
@@ -236,14 +227,15 @@ module.exports = class Blockchain {
     changeStringChain_to_BlockChain(arr){
         this.chain.pop(); //pop genesis block.
         arr.forEach(ele=>{
-            this.chain.push(new Block(ele.timestamp,new Transaction(ele.transactions.creditor,ele.transactions.debtor,ele.transactions.money),ele.previousHash,ele.index));
+            this.chain.push(new Block(ele.timestamp,new Transaction(ele.transactions.creditor,ele.transactions.debtor,ele.transactions.money, ele.transactions.duedate,ele.transactions.rate, ele.transactions.status),ele.previousHash,ele.index));
         })
         
     }
     changeString_to_Transactions(arr){
         arr.forEach(ele=>{
-            this.pendingTransactions.push(new Transaction(ele.creditor,ele.debtor,ele.money));
+            this.pendingTransactions.push(new Transaction(ele.creditor,ele.debtor,ele.money,ele.transactions.duedate,ele.transactions.rate, ele.transactions.status));
         })
     }
+
 
 }

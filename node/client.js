@@ -222,7 +222,7 @@ function verifiedResult(){
 }
 
 function sendBlock(msg){
-    blockchain.pendingTransactions.push(new Transaction(msg.Transaction.creditor,msg.Transaction.debtor,msg.Transaction.money));
+    blockchain.pendingTransactions.push(new Transaction(msg.Transaction.creditor,msg.Transaction.debtor,msg.Transaction.money, msg.Transaction.duedate, msg.Transaction.rate, msg.Transaction.status));
     blockchain.createTempBlock();
     blockchain.count++;
     wss.broadcast(blockchain.makeBDS());
@@ -240,6 +240,12 @@ function getWsAddr(ip,port){
 
 function getRandomInt(min, max) { //min ~ max 사이의 임의의 정수 반환
     return Math.floor(Math.random() * (max - min)) + min;
+}
+
+function changeDate_to_MyDate(){
+    var t = new Date();
+    var options={year:'numeric',month:'2-digit', day:'2-digit'};
+    return k.toLocaleDateString('ko-KR',options);
 }
 
 
