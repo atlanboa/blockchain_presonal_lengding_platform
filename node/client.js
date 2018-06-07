@@ -32,7 +32,7 @@ var ws=new WebSocket('ws://'+WEB_SERVER_IP+':'+PORT.toString());
  */
 var node_list=[];
 let client=[];
-//var blockchain=undefined;
+
 var blockchain = new BlockChain();
 
 wss.broadcast = function(data){
