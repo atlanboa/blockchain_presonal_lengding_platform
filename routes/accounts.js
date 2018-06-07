@@ -54,6 +54,7 @@ passport.use(new LocalStrategy({
             if (!user){
                 return done(null, false, { message: '아이디 또는 비밀번호 오류 입니다.' });
             }else{
+                //login ok, make connect
                 require('../node/client.js').connect_server();
                 return done(null, user );
             }
