@@ -7,16 +7,16 @@ var RestrictedUserSchema = new Schema({
         required: [true, ''],
         unique: true
     },
-    phone: {
-        type: String,
-        required: [true, ''],
-        unique: true
-    },
-    email: String,
-    credit: {
-        type: String,
-        default: 5
-    },
+    // phone: {
+    //     type: String,
+    //     required: [true, ''],
+    //     unique: true
+    // },
+    // email: String,
+    // credit: {
+    //     type: String,
+    //     default: 5
+    // },
 });
 /*
 일정 횟수 이상 연체시, 제한된 유저로써 DB에 저장

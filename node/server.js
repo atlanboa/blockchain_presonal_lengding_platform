@@ -8,6 +8,8 @@ var global = require('./global.js');
 var BlockChain = require('./Blockchain.js');
 var Transaction = require('./Transaction.js');
 var BankModel = require('../models/VirtualBankModel');
+var UserModel = require('../models/UserModel');
+var RestrictedUserModel = require('../models/RestrictedUserModel.js');
 
 var wss = new WebSocket.Server({ port: 8889 });
 
@@ -99,7 +101,6 @@ let recv = function (message) {
                     username: undefined, account_number: undefined, balance: undefined,
                 }
                 if (!recent_tr.status) { //새로 생긴 transaction
-                    BankModel.findOneAndUpdate()
                     BankModel.findOne({ username: recent_tr.getCreditor() }, (err, res) => {
                         if (!res) console.log('99: node/server.js ERROR! CAN NOT FIND BANK MODEL!!!!');
                         query.username = recent_tr.getCreditor();
@@ -225,6 +226,18 @@ module.exports.init = function () {
 
     const interval3 = setInterval(()=>{
         //@todo 사용자 overdue 5회인지 체크
+        UserModel.find({ overdue : 5}, function(err, users){
+            //users : Array
+            users.forEach(ele=>{
+                var rusermodel = new RestrictedUserModel({
+                    username: ele.username,
+                });
+                rusermodel.save();
+            });
+            
+        });
+        UserModel.remove({ overdue : 5});
+
     })
 
     //temp block
