@@ -38,6 +38,10 @@ var UserSchema = new Schema({
       type: String,
       default : 5
   },
+  overdue: {
+      type: Number,
+      default: 1
+  },
 });
 
 UserSchema.plugin( autoIncrement.plugin , { model : "user", field : "id" , startAt : 1 } );
