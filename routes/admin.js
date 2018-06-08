@@ -52,7 +52,7 @@ router.post('/products/write', upload.single('thumbnail'),loginRequired, csrfPro
         price : req.body.price,
         content : req.body.content,
         interestrate : 2.5,
-        interDate: req.body.interDate,
+        interDate: "연",
         preference: req.body.preference,
         repaymentDate:req.body.repaymentDate,
         username : req.user.username
@@ -116,9 +116,15 @@ router.post('/products/edit/:id',loginRequired, upload.single('thumbnail') , csr
         //넣을 변수 값을 셋팅한다
         var query = {
             name : req.body.name,
+            credit: req.user.credit,
             thumbnail : (req.file) ? req.file.filename : product.thumbnail,
             price : req.body.price,
-            description : req.body.description,
+            content : req.body.content,
+            interestrate : req.body.interestrate,
+            interDate: req.body.interDate,
+            preference: req.body.preference,
+            repaymentDate:req.body.repaymentDate,
+            username : req.user.username
         };
         ProductsModel.update({ id : req.params.id }, { $set : query }, function(err){
             res.redirect('/admin/products/detail/' + req.params.id);
