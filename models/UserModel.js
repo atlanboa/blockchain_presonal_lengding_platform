@@ -1,6 +1,11 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var autoIncrement = require('mongoose-auto-increment');
+
+/**
+ * @param overdue {Number} 연체횟수
+ */
+
 var UserSchema = new Schema({
   username : {
       type : String,

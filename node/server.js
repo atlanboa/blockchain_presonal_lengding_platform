@@ -99,12 +99,13 @@ let recv = function (message) {
                     username: undefined, account_number: undefined, balance: undefined,
                 }
                 if (!recent_tr.status) { //새로 생긴 transaction
+                    BankModel.findOneAndUpdate()
                     BankModel.findOne({ username: recent_tr.getCreditor() }, (err, res) => {
                         if (!res) console.log('99: node/server.js ERROR! CAN NOT FIND BANK MODEL!!!!');
                         query.username = recent_tr.getCreditor();
                         query.account_number = res.account_number;
                         query.balance = res.balance - recent_tr.money;
-                        BankModel.update({ username: recent_tr.getCreditor() }, { $set: query });
+                        res.update({ username: recent_tr.getCreditor() }, { $set: query });
                     });
 
                     BankModel.findOne({ username: recent_tr.getDebtor() }, (err, res) => {
@@ -112,7 +113,7 @@ let recv = function (message) {
                         query.username = recent_tr.getDebtor();
                         query.account_number = res.account_number;
                         query.balance = res.balance + recent_tr.money;
-                        BankModel.update({ username: recent_tr.getDebtor() }, { $set: query });
+                        res.update({ username: recent_tr.getDebtor() }, { $set: query });
                     });
                 }
                 else { //상환된 transaction
@@ -128,7 +129,7 @@ let recv = function (message) {
 
 
                         query.balance = res.balance + recent_tr.money + recent_tr.money * rate;
-                        BankModel.update({ username: recent_tr.getCreditor() }, { $set: query });
+                        res.update({ username: recent_tr.getCreditor() }, { $set: query });
 
                     })
                     BankModel.findOne({ username: recent_tr.getDebtor() }, (err, res) => {
@@ -223,7 +224,7 @@ module.exports.init = function () {
     }, 3000);
 
     const interval3 = setInterval(()=>{
-        
+        //@todo 사용자 overdue 5회인지 체크
     })
 
     //temp block
