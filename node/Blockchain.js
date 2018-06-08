@@ -103,6 +103,22 @@ module.exports = class Blockchain {
         }
 
     }
+
+    findDueTransaction(){
+        var result=[];
+        var date=new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'2-digit', day:'2-digit'});
+        this.chain.find(ele=>{
+            var tt=ele.getTransaction();
+            if(!tt.status){
+                if(tt.duedate==date){ //강제상환 대상!
+                    result.push(tt);
+                }
+            }
+        })
+
+        return result;
+    }
+
     verifyBlock() {
         let previousblock = this.getLatestBlock();
         console.log('66 Blockchain.js Hash Result Comparing : ', this.tempBlock.previousHash, ' , ',previousblock.calculateHash());

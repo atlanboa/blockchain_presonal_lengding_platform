@@ -223,8 +223,20 @@ module.exports.init = function () {
     }, 3000);
 
     const interval3 = setInterval(()=>{
+        // @todo usermodel에서 채무자 overdue +1, 5번넘으면 remove,
+        // 강제거래 완료이므로 Transaction 만들고, 거래완료 true
+
+
+        var result=global.blockchain.findDueTransaction();
+        if(result.length!=0){
+            result.forEach(ele=>{
+                ele.status=true;
+                global.blockchain.createTransaction(ele);
+            })
+        }
+
         
-    })
+    },12*3600*1000);
 
     //temp block
     // setTimeout(() => {
