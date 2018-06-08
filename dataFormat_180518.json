@@ -33,7 +33,7 @@ VBR_Data: VBRDataFormat
         }
 }
 
-//Block Added Response
+//Block Append Response
 BAR_Data: BARDataFormat
 {
         "Format": "BAR",
@@ -90,6 +90,9 @@ TRD:Transaction Data
                 Creditor:,
                 Debtor:,
                 Money:,
+                DueDate:,
+                Rate:,
+                Status:,
         }],
 }
 

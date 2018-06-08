@@ -21,7 +21,9 @@ module.exports=class Block{
         //application version variable needs to be added
         
     }
-
+    getTransaction(){
+        return this.transactions;
+    }
     calculateHash() {
         return SHA256(this.previousHash + this.timestamp + JSON.stringify(this.transactions) + this.index).toString();
     }

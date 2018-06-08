@@ -32,7 +32,7 @@ var ws=new WebSocket('ws://'+WEB_SERVER_IP+':'+PORT.toString());
  */
 var node_list=[];
 let client=[];
-//var blockchain=undefined;
+
 var blockchain = new BlockChain();
 
 wss.broadcast = function(data){
@@ -53,7 +53,7 @@ wss.on('connection',function(ws,req){
 
 
 /**WebServer_ws 와 연결하는 부분 */
-var connect_server = function(){ 
+module.exports.connect_server = function(){ 
     ws.on('open',function(){
         console.log('33: Connect with Web_server_wss');
         var IAP={};
@@ -72,6 +72,26 @@ var connect_server = function(){
 
     ws.on('message',webServer_recv);
 }
+/*test for data sending and receiving*/
+// let connect_server = function(){ 
+//     ws.on('open',function(){
+//         console.log('33: Connect with Web_server_wss');
+//         var IAP={};
+//         IAP.Format='IAP';
+//         IAP.IP=IP;
+//         IAP.Port=MYPORT;
+//         ws.send(JSON.stringify(IAP));
+        
+//         ws.on('close',()=>{
+//             /** 서버와 연결이 끊어졌을 때 어떻게 동작해야 하는지 아래에 기술 */
+//             console.log('42: WebServer is closed!');
+//             //reconnect
+//         });
+
+//     });
+
+//     ws.on('message',webServer_recv);
+// }
 
 let webServer_recv=function(message){
     console.log('64:webServer_recv,',message);
@@ -173,8 +193,8 @@ let client_recv=function(message){ //ws 에 붙어야 함.
             blockchain.count = blockchain.count + 1;
             let len=client.length;   
             let n = len - parseInt((len-1)/3); //최소 n개의 valid-verifying이 있어야됨.
-            //@todo
             if((blockchain.count >= n)&&(blockchain.count_state == true)){
+                //consider pass to check transactions
                 //n개 이상의 node가 블록을 수신했으면 검증 결과 배포
                 console.log('174 : start verfiying');
                 verifiedResult();
@@ -189,12 +209,12 @@ let client_recv=function(message){ //ws 에 붙어야 함.
             console.log('201 : verify : ',blockchain.verify);
             let len=client.length;
             let n = len - parseInt((len-1)/3); //최소 n개의 valid-verifying이 있어야됨.
-         
-            //@todo
-            if(blockchain.verify >= n){
+            if(blockchain.verify >= n){ 
+                //consider pass to check transactions
                 //n개 이상의 node가 블록이 valid하다고 했을때
                 console.log('194 : start appendingBlock');
                 blockchain.appendingBlock();
+                sendBAR();
             }
         }
 
@@ -222,10 +242,15 @@ function verifiedResult(){
 }
 
 function sendBlock(msg){
-    blockchain.pendingTransactions.push(new Transaction(msg.Transaction.creditor,msg.Transaction.debtor,msg.Transaction.money));
+    blockchain.pendingTransactions.push(new Transaction(msg.Transaction.creditor,msg.Transaction.debtor,msg.Transaction.money, msg.Transaction.duedate, msg.Transaction.rate, msg.Transaction.status));
     blockchain.createTempBlock();
     blockchain.count++;
     wss.broadcast(blockchain.makeBDS());
+}
+
+function sendBAR(){
+    // console.log('252 : sendBAR');
+    ws.send(JSON.stringify(blockchain.makeBAR()));
 }
 
 
@@ -243,6 +268,8 @@ function getRandomInt(min, max) { //min ~ max 사이의 임의의 정수 반환
 }
 
 
+
+
 /**main */
-connect_server();
+// connect_server();
 // test_sendBlock();

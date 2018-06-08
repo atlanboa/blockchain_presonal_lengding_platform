@@ -23,20 +23,15 @@
         <%}%>
         <div class="login-panel panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">로그인</h3>
+                <h3 class="panel-title">잔액 충전하기</h3>
             </div>
             <div class="panel-body">
-                <form role="form" action="" id="login_form" method="post">
+                <form role="form" action="" id="charge_form" method="post">
                     <fieldset>
                         <div class="form-group">
-                            <input class="form-control" placeholder="ID" name="username" type="text" autofocus="" required="">
+                            <input class="form-control" placeholder="금액(원)" name="chargemoney" type="number" autofocus="" required="" value="">
                         </div>
-                        <div class="form-group">
-                            <input class="form-control" placeholder="Password" name="password" type="password" value="" required="">
-                        </div>
-                        <!-- Change this to a button or input when using this as a form -->
-                        <input type="submit" class="btn btn-md btn-success btn-block" value="로그인">
-                        <input onClick="opener.document.location.href='/accounts/join';self.close();" type="submit" class="btn btn-md btn-success btn-block" value="회원가입">                       
+                        <input type="submit" class="btn btn-md btn-success btn-block" value="충전">                      
                     </fieldset>
                 </form>
             </div>
@@ -47,16 +42,10 @@
 (function(){
     $(document).ready(function() {
         $('#login_form').submit(function(){
-            var $usernameInput = $('#login_form input[name=username]');
-            var $passwordInput = $('#login_form input[name=password]');
+            var $chargemoney = $('#charge_form input[name=chargemoney]');
             if(!$usernameInput.val()){
-                alert("아이디를 입력해주세요.");
+                alert("금액 입력해주세요.");
                 $usernameInput.focus();
-                return false;
-            }
-            if(!$passwordInput.val()){
-                alert("패스워드를 입력해주세요.");
-                $passwordInput.focus();
                 return false;
             }
             return true;

@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var ProductsModel = require('../models/ProductsModel');
 var CommentsModel = require('../models/CommentsModel');
+var UserModel =require('../models/UserModel');
 var csrf = require('csurf');
 var csrfProtection = csrf({ cookie: true });
 var loginRequired = require('../libs/loginRequired');
@@ -43,15 +44,34 @@ router.get('/products/write',loginRequired, csrfProtection, function(req,res){
 });
 
 router.post('/products/write', upload.single('thumbnail'),loginRequired, csrfProtection, function(req,res){
-    var product = new ProductsModel({
+    if(req.body.price >= 100000){
+        var product = new ProductsModel({
         name : req.body.name,
-        types: req.body.type,
         credit: req.user.credit,
         thumbnail : (req.file) ? req.file.filename : "",
         price : req.body.price,
-        description : req.body.description,
+        content : req.body.content,
+        interestrate : 2.5,
+        interDate: "연",
+        preference: req.body.preference,
+        repaymentDate:req.body.repaymentDate,
         username : req.user.username
-    });
+        });
+    }
+    else{
+        var product = new ProductsModel({
+            name : req.body.name,
+            credit: req.user.credit,
+            thumbnail : (req.file) ? req.file.filename : "",
+            price : req.body.price,
+            content : req.body.content,
+            interestrate : req.body.interestrate,
+            interDate: req.body.interDate,
+            preference: req.body.preference,
+            repaymentDate:req.body.repaymentDate,
+            username : req.user.username
+        });
+    }
     //이 아래는 수정되지 않았음
     var validationError = product.validateSync();
     if(validationError){
@@ -67,9 +87,13 @@ router.post('/products/write', upload.single('thumbnail'),loginRequired, csrfPro
 router.get('/products/detail/:id' , function(req, res){
     //url 에서 변수 값을 받아올떈 req.params.id 로 받아온다
     ProductsModel.findOne( { 'id' :  req.params.id } , function(err ,product){
+        if(req.user == undefined){
+            var u = "undefined";
+        }
+        else{var u = req.user;}
         //제품정보를 받고 그안에서 댓글을 받아온다.
         CommentsModel.find({ product_id : req.params.id } , function(err, comments){
-            res.render('admin/productsDetail', { product: product , comments : comments });
+            res.render('admin/productsDetail', { product: product , user: u, comments : comments });
         });        
     });
 });
@@ -92,9 +116,15 @@ router.post('/products/edit/:id',loginRequired, upload.single('thumbnail') , csr
         //넣을 변수 값을 셋팅한다
         var query = {
             name : req.body.name,
+            credit: req.user.credit,
             thumbnail : (req.file) ? req.file.filename : product.thumbnail,
             price : req.body.price,
-            description : req.body.description,
+            content : req.body.content,
+            interestrate : req.body.interestrate,
+            interDate: req.body.interDate,
+            preference: req.body.preference,
+            repaymentDate:req.body.repaymentDate,
+            username : req.user.username
         };
         ProductsModel.update({ id : req.params.id }, { $set : query }, function(err){
             res.redirect('/admin/products/detail/' + req.params.id);
@@ -127,5 +157,18 @@ router.post('/products/ajax_comment/delete', function(req, res){
         res.json({ message : "success" });
     });
 });
+
+router.post('products/makeTransactions/:product',(req,res)=>{
+    var product=req.params.product;
+    var blockchain=requrie('../global.js').blockchain; //server blockchain
+    var Transaction=require('../node/Transaction.js');
+
+    var newTransaction=new Transaction(product.username, req.user.username, product.price, blockchain.changeDate_to_DueDate(product.repaymentDate), product.interestrate, product.interDate);
+
+    blockchain.createTransaction(newTransaction);
+
+});
+
+
 
 module.exports = router;

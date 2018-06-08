@@ -60,6 +60,64 @@ module.exports = class Blockchain {
         console.log('60 Blockchain.js : Chain : ',this.chain);
         
     }
+    // makeBAR(){
+    //     let block = this.getLatestBlock();
+    //     var BAR ={};
+    //     BAR.Format = 'BAR';
+    //     BAR.Data = {};
+    //     BAR.Data.Status = 'Success';
+    //     BAR.Block = {};
+    //     BAR.Block.Timestamp = block.timestamp;
+    //     BAR.Block.Transactions = block.transactions;
+    //     BAR.Block.PreviousHash = block.previousHash;
+    //     BAR.Block.Hash = block.hash;
+    //     BAR.Block.Index = block.index;
+    //     return BAR;
+    // }
+    appendingBlock_server_chain(msg){
+        this.chain.push(new Block(msg.Block.Timestamp, msg.Block.Transactions,
+        msg.Block.PreviousHash, msg.Block.Index));
+
+    }
+
+    /**
+     * @description 체인에서 관련 된 유저의 Trasaction을 반환합니다.
+     * @return {Object} { creditor_list:Array, debtor_list:Array }
+     * @param {String} userName 
+     */
+    findTransaction(userName) {
+        var transaction_creditor = [];
+        var transaction_debtor = [];
+        this.chain.find(ele => {
+            var tt = ele.getTransaction();
+            if (tt.getCreditor() == userName) {
+                transaction_creditor.push(tt);
+            } else if (tt.getDebtor() == userName) {
+                transaction_debtor.push(tt);
+            }
+        });
+        
+        return { 
+            creditor_list:transaction_creditor,
+            debtor_list:transaction_debtor,
+        }
+
+    }
+
+    findDueTransaction(){
+        var result=[];
+        var date=new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'2-digit', day:'2-digit'});
+        this.chain.find(ele=>{
+            var tt=ele.getTransaction();
+            if(!tt.status){
+                if(tt.duedate==date){ //강제상환 대상!
+                    result.push(tt);
+                }
+            }
+        })
+
+        return result;
+    }
 
     verifyBlock() {
         let previousblock = this.getLatestBlock();
@@ -71,15 +129,6 @@ module.exports = class Blockchain {
         else {
             return false;
         }
-    }
-
-    makeCCR(){
-        var CCR = {};
-        CCR.Format = 'CCR';
-        CCR.Data ={};
-        CCR.Data.Status = 'Confirm';
-        CCR.Data.Info = 'None';
-        return CCR;
     }
     makeBRR(){
         var BRR ={};
@@ -111,11 +160,17 @@ module.exports = class Blockchain {
         return VBR;
     }
     makeBAR(){
+        let block = this.getLatestBlock();
         var BAR ={};
         BAR.Format = 'BAR';
         BAR.Data = {};
         BAR.Data.Status = 'Success';
-        BAR.Data.Info = 'None'
+        BAR.Block = {};
+        BAR.Block.PreviousHash = block.previousHash;
+        BAR.Block.Timestamp = block.timestamp;
+        BAR.Block.Transactions = block.transactions;
+        BAR.Block.Hash = block.hash;
+        BAR.Block.Index = block.index;
         return BAR;
     }
     makeBDS() {
@@ -236,14 +291,22 @@ module.exports = class Blockchain {
     changeStringChain_to_BlockChain(arr){
         this.chain.pop(); //pop genesis block.
         arr.forEach(ele=>{
-            this.chain.push(new Block(ele.timestamp,new Transaction(ele.transactions.creditor,ele.transactions.debtor,ele.transactions.money),ele.previousHash,ele.index));
+            this.chain.push(new Block(ele.timestamp,new Transaction(ele.transactions.creditor,ele.transactions.debtor,ele.transactions.money, ele.transactions.duedate,ele.transactions.rate, ele.transactions.status),ele.previousHash,ele.index));
         })
         
     }
     changeString_to_Transactions(arr){
         arr.forEach(ele=>{
-            this.pendingTransactions.push(new Transaction(ele.creditor,ele.debtor,ele.money));
+            this.pendingTransactions.push(new Transaction(ele.creditor,ele.debtor,ele.money,ele.transactions.duedate,ele.transactions.rate, ele.transactions.status));
         })
     }
+
+    changeDate_to_DueDate(days){
+        var t = new Date();
+        t.setDate(t.getDate()+days);
+        var options={year:'numeric',month:'2-digit', day:'2-digit'};
+        return k.toLocaleDateString('ko-KR',options);
+    }
+
 
 }

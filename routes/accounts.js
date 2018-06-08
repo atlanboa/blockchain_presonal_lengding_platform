@@ -41,11 +41,12 @@ passport.deserializeUser(function (user, done) {
  *          1 : 서버 에러
  *          2 : 성공했을 때 return value 
  *          3 : 사용자가 임의로 실패를 만들고 싶을 경우, 일반적으로 에러 메시지 작성 
+ * req.session.passport.user 에 세션 정보 저장
  */
 passport.use(new LocalStrategy({
         usernameField: 'username',
         passwordField : 'password',
-        session : true, //session true 하면 session에 저장되는데? //그럼 session 시간은 어떻게 설정하죠?
+        session : true,
         passReqToCallback : true //false 하면 콜백 parameter req가 없어짐
     },
     function (req, username, password, done) {
@@ -53,6 +54,8 @@ passport.use(new LocalStrategy({
             if (!user){
                 return done(null, false, { message: '아이디 또는 비밀번호 오류 입니다.' });
             }else{
+                //login ok, make connect
+                require('../node/client.js').connect_server();
                 return done(null, user );
             }
         });
@@ -72,6 +75,7 @@ router.post('/join', function(req, res){
         username : req.body.username,
         password : passwordHash(req.body.password),
         displayname : req.body.displayname,
+        nickname : req.body.nickname,
         birth1: req.body.birth1,
         birth2: req.body.birth2,
         birth3: req.body.birth3,
@@ -79,7 +83,7 @@ router.post('/join', function(req, res){
         email : req.body.email
     });
     User.save(function(err){
-        res.send('<script>alert("회원가입 성공");location.href="/accounts/login";</script>');
+        res.send('<script>alert("회원가입 성공");location.href="/#";</script>');
     });
 });
 
@@ -94,7 +98,7 @@ passport.authenticate('local', {
     failureFlash: true 
 }), 
 function(req, res){
-    res.send('<script>location.href="/";</script>');
+    res.send('<script>opener.document.location.reload();self.close();</script>');
 }
 );
 
@@ -102,10 +106,53 @@ router.get('/success', function(req, res){
     res.send(req.user);
 });
 
-
 router.get('/logout', function(req, res){
     req.logout();
-    res.redirect('/accounts/login');
+    res.redirect('/');
 });
+
+router.get('/myroom', function(req,res){
+    if(!req.isAuthenticated()){
+        res.send('<script>alert("로그인이 필요한 서비스입니다.");function popup(){var url ="/accounts/login";var name = "popup";window.open(url,name,"width=300,height=280,toolbar=no,status=no,location=no,scrollbars=yes,menubar=no,resizable=yes,left=50,right=50");}popup();</script>');
+    }else{
+        var blockchain=require('../node/global.js').blockchain;
+        var object=blockchain.findTransaction(req.user.username);
+        
+        res.render('accounts/myroom',{user : req.user, object:object, date:new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'2-digit', day:'2-digit'})});
+
+    }
+});
+
+router.get('/charge/:id',function(req,res){
+    res.render('accounts/charge', { flashMessage : req.flash().error});
+});
+router.post('/charge/:id',function(req,res){
+    UserModel.findOne( {id : req.params.id} , function(err, user){
+        if(!user){
+            console.log(req.body.chargemoney);
+        }
+        else{
+            req.user.money=user.money+Number(req.body.chargemoney);
+            var query = {
+                money:user.money+Number(req.body.chargemoney)
+            };
+            UserModel.update({ id : req.params.id }, { $set : query }, function(err){
+                res.send('<script>opener.document.location.reload();self.close();</script>');
+            });
+        }
+    });
+});
+
+router.post('/makeTransaction/:result',(req,res)=>{
+    var info=req.params.result;
+    var blockchain=require('../node/global.js').blockchain;
+    var Transaction=requrie('../node/Transaction.js');
+
+    var k=new Transaction(info.creditor,info.debtor,info.money,info.dueDate,info.rate,info.rate_type);
+    k.status=true;
+    blockchain.createTransaction(k);
+
+})
+
 
 module.exports = router;
