@@ -96,11 +96,12 @@ module.exports = class Blockchain {
                 transaction_debtor.push(tt);
             }
         });
-        var k={ 
+        
+        return { 
             creditor_list:transaction_creditor,
             debtor_list:transaction_debtor,
         }
-        return k;
+
     }
     verifyBlock() {
         let previousblock = this.getLatestBlock();

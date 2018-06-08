@@ -1,5 +1,5 @@
 /** @author: Yeji-Kim
-*   @date: 2018-05-18
+*   @date: 2018-05-18 ~ 
 *   @description: WebServer(express) _ ws server.
 */
 var WebSocket = require('ws');
@@ -21,14 +21,6 @@ var wss = new WebSocket.Server({ port: 8889 });
 let client = []; //save client ip and port
 
 global.blockchain = new BlockChain();
-//new Blockchain해주면 genesis Block은 기본으로 생성됨.
-//Blockchain.js constructor 확인해봐
-// blockchain.createGenesisBlock();
-
-// blockchain.createTransaction(new Transaction('ab','dd',12300));
-// blockchain.createTransaction(new Transaction('ac','ab',12000));
-// blockchain.createTransaction(new Transaction('dd','aa',10400));
-
 
 wss.broadcast = function (data) {
     wss.clients.forEach(function each(client) {
@@ -98,13 +90,14 @@ let recv = function (message) {
                 var query = {
                     username: undefined, account_number: undefined, balance: undefined,
                 }
+
                 if (!recent_tr.status) { //새로 생긴 transaction
                     BankModel.findOne({ username: recent_tr.getCreditor() }, (err, res) => {
                         if (!res) console.log('99: node/server.js ERROR! CAN NOT FIND BANK MODEL!!!!');
                         query.username = recent_tr.getCreditor();
                         query.account_number = res.account_number;
                         query.balance = res.balance - recent_tr.money;
-                        BankModel.update({ username: recent_tr.getCreditor() }, { $set: query });
+                        res.update({ username: recent_tr.getCreditor() }, { $set: query });
                     });
 
                     BankModel.findOne({ username: recent_tr.getDebtor() }, (err, res) => {
@@ -112,23 +105,20 @@ let recv = function (message) {
                         query.username = recent_tr.getDebtor();
                         query.account_number = res.account_number;
                         query.balance = res.balance + recent_tr.money;
-                        BankModel.update({ username: recent_tr.getDebtor() }, { $set: query });
+                        res.update({ username: recent_tr.getDebtor() }, { $set: query });
                     });
                 }
                 else { //상환된 transaction
+                    var days=getDayDiff(getTodayDate(), dueDate);
+
                     BankModel.findOne({ username: recent_tr.getCreditor() }, (err, res) => {
                         if (!res) console.log('121: node/server.js ERROR! CAN NOT FIND BANK MODEL!!!!');
                         query.username = recent_tr.getCreditor();
                         query.account_number = res.account_number;
-                        //날짜차이 구하기
-                        if (getDayDiff(getTodayDate(), dueDate)) {
-                            //만기일이랑 오늘 날짜 
 
-                        }
+                        query.balance = res.balance + recent_tr.money + (recent_tr.money * recent_tr.day_rate) * days;
 
-
-                        query.balance = res.balance + recent_tr.money + recent_tr.money * rate;
-                        BankModel.update({ username: recent_tr.getCreditor() }, { $set: query });
+                        res.update({ username: recent_tr.getCreditor() }, { $set: query });
 
                     })
                     BankModel.findOne({ username: recent_tr.getDebtor() }, (err, res) => {
@@ -136,8 +126,14 @@ let recv = function (message) {
                         query.username = recent_tr.getDebtor();
                         query.account_number = res.account_number;
 
-                        query.balance = res.balance - recent_tr.money - recent_tr.money * rate;
-                        BankModel.update({ username: recent_tr.getDebtor() }, { $set: query });
+                        query.balance = res.balance - recent_tr.money - (recent_tr.money * recent_tr.day_rate) * days;
+                        
+                        if(query.balance<0){ //음수가 될 수 없으니까
+                            //@todo 강제상환 부분
+                            query.balance=0;
+                        }
+
+                        res.update({ username: recent_tr.getDebtor() }, { $set: query });
                     })
                 }
 
@@ -151,11 +147,15 @@ let recv = function (message) {
 function getTodayDate() {
     return new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' });
 }
-
+/**
+ * @param {String} date1 '2018-06-08'
+ * @param {String} date2 '2018-06-08'
+ * @returns {Integer} date1이 date2보다 과거이면 양수 값, date1이 date2보다 미래면 마이너스를 반환합니다. 일치하면 0
+ */
 function getDayDiff(date1, date2) { //두 날짜간의 일 차이를 구한다.
     var d1 = new Date(date1);
     var d2 = new Date(date2);
-    var diff = Math.abs(d2.getTime() - d1.getTime());
+    var diff = (d2.getTime() - d1.getTime());
     diff = Math.ceil(diff / (1000 * 3600 * 24));
     return diff;
 }

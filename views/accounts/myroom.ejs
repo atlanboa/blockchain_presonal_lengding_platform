@@ -73,19 +73,24 @@
                             <%}else{%>
                                 <ul>
                                     <%for(var result in object.debtor_list){%>
-                                        <li>
-                                            <%=result%>
-                                            <a href="/" class="btn" style="background-color:grey;">상환하기</a>
-                                            <a class="btn" style="background-color:rgba(32,177,67,1);">상환완료</a>
-                                            <a class="btn .btn-danger">강제상환</a>
-                                        </li>
+                                    <li>
+                                        <%=result%>
+                                        <%if(result.status==true){%>
+                                            <a class="btn" style="background-color:rgb(132, 134, 132);">상환완료</a>
+                                        <%}else{
+                                            if(date==result.dueDate){%>
+                                                <a class="btn .btn-danger">강제상환</a>
+                                            <%}else{%>
+                                                <a href="/makeTransaction/<%=result%>" class="btn" style="background-color:rgba(32,177,67,1)">상환하기</a>
+                                        <%}}%>
+                                    </li>
                                 </ul>
                                 <%} }%>
                                     <div align="right">
                                         <a href="/" class="btn btn-default">홈으로</a>
                                     </div>
         </div>
-
+    </div>
 
 <script type="text/javascript">
     function popup() {
@@ -93,5 +98,6 @@
         var name = "popup";
         window.open(url, name, "width=300,height=280,toolbar=no,status=no,location=no,scrollbars=yes,menubar=no,resizable=yes,left=50,right=50");
     }
+
 </script>
 <% include ../includes/footer.ejs %>
