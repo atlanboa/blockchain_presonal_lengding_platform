@@ -7,6 +7,8 @@ var WebSocket = require('ws');
 var global = require('./global.js');
 var BlockChain = require('./Blockchain.js');
 var Transaction = require('./Transaction.js');
+var BankModel=require('../models/VirtualBankModel');
+
 var wss = new WebSocket.Server({ port: 8889 });
 
 /**
@@ -92,12 +94,66 @@ let recv = function (message) {
                 //console.log('87 : received BAR');
                 global.blockchain.appendingBlock_server_chain(msg);
                 global.blockchain.count = 0;
-                //console.log(global.blockchain.chain);
+                var recent_tr = msg.Block.Transactions;
+                var query={
+                    username:undefined,account_number:undefined,balance:undefined,
+                }
+                if(!recent_tr.status){ //새로 생긴 transaction
+                    BankModel.findOne({username:recent_tr.getCreditor()},(err,res)=>{
+                        if(!res) console.log('99: node/server.js ERROR! CAN NOT FIND BANK MODEL!!!!');
+                        query.username=recent_tr.getCreditor();
+                        query.account_number=res.account_number;
+                        query.balance=res.balance-recent_tr.money;
+                        BankModel.update({username:recent_tr.getCreditor()},{ $set:query });
+                    });
+    
+                    BankModel.findOne({username:recent_tr.getDebtor()},(err,res)=>{
+                        if(!res) console.log('108: node/server.js ERROR! CAN NOT FIND BANK MODEL!!!!');
+                        query.username=recent_tr.getDebtor();
+                        query.account_number=res.account_number;
+                        query.balance=res.balance+recent_tr.money;
+                        BankModel.update({username:recent_tr.getDebtor()},{ $set:query });
+                    });
+                }
+                else{ //상환된 transaction
+                    BankModel.findOne({username:recent_tr.getCreditor()},(err,res)=>{
+                        if(!res) console.log('121: node/server.js ERROR! CAN NOT FIND BANK MODEL!!!!');
+                        query.username=recent_tr.getCreditor();
+                        query.account_number=res.account_number;
+                        //날짜차이 구하기
+                        if(getDayDiff(getTodayDate(),dueDate)){
+                            //만기일이랑 오늘 날짜 
+
+                        }
+
+
+                        query.balance=res.balance+recent_tr.money+recent_tr.money*rate;
+                        BankModel.update({username:recent_tr.getCreditor()},{ $set:query });
+
+                    })
+                    BankModel.findOne({username:recent_tr.getDebtor()},(err,res)=>{
+                        if(!res) console.log('128: node/server.js ERROR! CAN NOT FIND BANK MODEL!!!!');
+                        q
+                    })
+                }
+
             }
 
         }
 
     }
+}
+
+function getTodayDate(){
+    return new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'2-digit', day:'2-digit'});
+}
+
+function getDayDiff(date1,date2){ //두 날짜간의 일 차이를 구한다.
+    var d1=new Date(date1);
+    var d2=new Date(date2);
+    var diff=Math.abs(d2.getTime()-d1.getTime());
+    diff=Math.ceil(diff/(1000*3600*24));
+    return diff;
 }
 
 function noop() { }
