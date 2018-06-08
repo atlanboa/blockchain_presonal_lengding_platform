@@ -52,25 +52,25 @@ router.post('/products/write', upload.single('thumbnail'),loginRequired, csrfPro
         price : req.body.price,
         content : req.body.content,
         interestrate : 2.5,
-        interDate: req.body.interDate,
+        interDate: "연",
         preference: req.body.preference,
         repaymentDate:req.body.repaymentDate,
         username : req.user.username
-    });
+        });
     }
     else{
-    var product = new ProductsModel({
-        name : req.body.name,
-        credit: req.user.credit,
-        thumbnail : (req.file) ? req.file.filename : "",
-        price : req.body.price,
-        content : req.body.content,
-        interestrate : req.body.interestrate,
-        interDate: req.body.interDate,
-        preference: req.body.preference,
-        repaymentDate:req.body.repaymentDate,
-        username : req.user.username
-    });
+        var product = new ProductsModel({
+            name : req.body.name,
+            credit: req.user.credit,
+            thumbnail : (req.file) ? req.file.filename : "",
+            price : req.body.price,
+            content : req.body.content,
+            interestrate : req.body.interestrate,
+            interDate: req.body.interDate,
+            preference: req.body.preference,
+            repaymentDate:req.body.repaymentDate,
+            username : req.user.username
+        });
     }
     //이 아래는 수정되지 않았음
     var validationError = product.validateSync();
@@ -116,9 +116,15 @@ router.post('/products/edit/:id',loginRequired, upload.single('thumbnail') , csr
         //넣을 변수 값을 셋팅한다
         var query = {
             name : req.body.name,
+            credit: req.user.credit,
             thumbnail : (req.file) ? req.file.filename : product.thumbnail,
             price : req.body.price,
-            description : req.body.description,
+            content : req.body.content,
+            interestrate : req.body.interestrate,
+            interDate: req.body.interDate,
+            preference: req.body.preference,
+            repaymentDate:req.body.repaymentDate,
+            username : req.user.username
         };
         ProductsModel.update({ id : req.params.id }, { $set : query }, function(err){
             res.redirect('/admin/products/detail/' + req.params.id);
@@ -156,11 +162,13 @@ router.post('products/makeTransactions/:product',(req,res)=>{
     var product=req.params.product;
     var blockchain=requrie('../global.js').blockchain; //server blockchain
     var Transaction=require('../node/Transaction.js');
-    /** @todo model/ProductModel.js 에서 상환 일 업데이트 되면 Transaction 부분 Date 없애기 */
-    var newTransaction=new Transaction(product.username, req.user.username, product.price, blockchain.changeDate_to_DueDate(product.interDate), product.interestrate);
+
+    var newTransaction=new Transaction(product.username, req.user.username, product.price, blockchain.changeDate_to_DueDate(product.repaymentDate), product.interestrate, product.interDate);
 
     blockchain.createTransaction(newTransaction);
 
 });
+
+
 
 module.exports = router;

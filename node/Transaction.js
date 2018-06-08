@@ -10,11 +10,10 @@ module.exports=class Transaction{
      * @param {Date} dueDate date
      * @param {Integer} rate 이자율
      * @param {Boolean} status true/ false
-     * @param {Boolean} rate_type 
      * @description Transaction Class. uasge: const transaction = new Transaction(creditor, debtor, money, date, rate)
-     * @todo rate_type 에 따라서 고치는거 해야하는데 귀찮아서 안했음 뿌듯!
+     * 일 이자율로 고정 (계산하기 편함)
      */
-    constructor(creditor, debtor, money, date,rate,rate_type='year'){
+    constructor(creditor, debtor, money, date,rate,rate_type){
         this.creditor = creditor;
         this.debtor = debtor;
         this.money = money;
@@ -22,7 +21,23 @@ module.exports=class Transaction{
         this.rate = rate;
         this.rate_type=rate_type;
         this.status = false;
+        
+        switch(this.rate_type){
+            case '연':
+                this.day_rate=WPRtoDPR(MPRtoWPR(APRtoMPR(this.rate)));
+                break;
+            case '달':
+                this.day_rate=MPRtoWPR(WPRtoDPR(this.rate))                ;
+                break;
+            case '주':
+                this.day_rate=WPRtoDPR(this.rate);
+                break;
+            default:
+                this.day_rate=this.rate;
+            break;
+        }
     }
+
     getCreditor(){
         return this.creditor;
     }
@@ -38,23 +53,29 @@ module.exports=class Transaction{
      * @description
      * APR: 연이자율, MPR: 월이자율, WPR: 주이자율, DPR: 일이자율
      */
-    APRtoMPR(){
+    APRtoMPR(rate){
         rate=rate/12;
+        return rate;
     }   
-    MPRtoAPR(){
+    MPRtoAPR(rate){
         rate=rate*12;
+        return rate;
     }
-    MPRtoWPR(){
+    MPRtoWPR(rate){
         rate=rate/4;
+        return rate;
     }
-    WPRtoDPR(){
+    WPRtoDPR(rate){
         rate=rate/7;
+        return rate;
     }
-    DPRtoWPR(){
+    DPRtoWPR(rate){
         rate=rate*7;
+        return rate;
     }
-    WPRtoMPR(){
+    WPRtoMPR(rate){
         rate=rate*4;
+        return rate;
     }
 
 }

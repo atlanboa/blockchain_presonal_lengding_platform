@@ -118,7 +118,8 @@ router.get('/myroom', function(req,res){
         var blockchain=require('../node/global.js').blockchain;
         var object=blockchain.findTransaction(req.user.username);
         
-        res.render('accounts/myroom',{user : req.user, object:object });
+        res.render('accounts/myroom',{user : req.user, object:object, date:new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'2-digit', day:'2-digit'})});
+
     }
 });
 
@@ -141,5 +142,17 @@ router.post('/charge/:id',function(req,res){
         }
     });
 });
+
+router.post('/makeTransaction/:result',(req,res)=>{
+    var info=req.params.result;
+    var blockchain=require('../node/global.js').blockchain;
+    var Transaction=requrie('../node/Transaction.js');
+
+    var k=new Transaction(info.creditor,info.debtor,info.money,info.dueDate,info.rate,info.rate_type);
+    k.status=true;
+    blockchain.createTransaction(k);
+
+})
+
 
 module.exports = router;
