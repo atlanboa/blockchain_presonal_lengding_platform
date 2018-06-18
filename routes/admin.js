@@ -158,14 +158,16 @@ router.post('/products/ajax_comment/delete', function(req, res){
     });
 });
 
-router.post('products/makeTransactions/:product',(req,res)=>{
+router.get('/products/makeTransactions/:product',(req,res)=>{
+    console.log("163 : print product : ", req.params.product);
     var product=req.params.product;
-    var blockchain=requrie('../global.js').blockchain; //server blockchain
+    var blockchain=require('../node/global.js').blockchain; //server blockchain
     var Transaction=require('../node/Transaction.js');
 
     var newTransaction=new Transaction(product.username, req.user.username, product.price, blockchain.changeDate_to_DueDate(product.repaymentDate), product.interestrate, product.interDate);
 
     blockchain.createTransaction(newTransaction);
+    res.redirect("../../../accounts/myroom");
 
 });
 

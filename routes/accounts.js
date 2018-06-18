@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var UserModel = require('../models/UserModel');
+var VirtualBankModel = require('../models/VirtualBankModel');
 var passwordHash = require('../libs/passwordHash');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
@@ -117,11 +118,18 @@ router.get('/myroom', function(req,res){
     if(!req.isAuthenticated()){
         res.send('<script>alert("로그인이 필요한 서비스입니다.");function popup(){var url ="/accounts/login";var name = "popup";window.open(url,name,"width=300,height=280,toolbar=no,status=no,location=no,scrollbars=yes,menubar=no,resizable=yes,left=50,right=50");}popup();</script>');
     }else{
+        var balance;
         var blockchain=require('../node/global.js').blockchain;
         var object=blockchain.findTransaction(req.user.username);
+        console.log('account.js:122:',object);
+        console.log('122 : username print : ', req.user.username);
+        VirtualBankModel.findOne({ username : '1'}, (err, doc)=>{
+            if(!doc) console.log('123 : CAN NOT FIND USER BANK ACCOUNT');
+            balance = doc.balance;
+            console.log('125 : print balance : ',balance);
+            res.render('accounts/myroom',{user : req.user, balance : balance,object:object, date:new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'2-digit', day:'2-digit'})});
+        });
         
-        res.render('accounts/myroom',{user : req.user, object:object, date:new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'2-digit', day:'2-digit'})});
-
     }
 });
 

@@ -1,79 +1,84 @@
 <% include ../includes/header.ejs %>
     <div style="padding: 2%;" class="panel panel-default">
         <div class="panel-heading">
-          <table>
-           <td style="font-size:130%" width="70%">
-            <%=product.name%>
-            </td>
-            <td style="text-align: right;min-width:110px">
-            작성자 :
-            </td>
-            <td style="text-align: center; min-width:20px"> 
-            <a style="font-size:110%" class="btn-info btn-sm"><%=product.credit%></a> 
-            </td>
-            <td>
-                <%=product.username%>
-            </td>
+            <table>
+                <td style="font-size:130%" width="70%">
+                    <%=product.name%>
+                </td>
+                <td style="text-align: right;min-width:110px">
+                    작성자 :
+                </td>
+                <td style="text-align: center; min-width:20px">
+                    <a style="font-size:110%" class="btn-info btn-sm">
+                        <%=product.credit%>
+                    </a>
+                </td>
+                <td>
+                    <%=product.username%>
+                </td>
             </table>
         </div>
         <div class="panel-body">
-            <div style="padding-bottom: 10px" >
-               <table class="table">
-               <tr>
-               <td style="min-width:100px">
-                   대출 금액 :
-               </td> 
-               <td width="90%">
-                   <%=product.price%> 원
-               </td>
-               </tr>
-                <tr>
-                <td>
-                이자율 : 
-                </td>
-                <td>
-                <%=product.interestrate%> %
-                </td>
-                </tr>
-                <tr>
-                <td>
-                우대조건 : 
-                </td>
-                <td>
-                <%=product.preference%>
-                </td>
-                </tr>
-                <tr>
-               <td>
-                상환일 : 
-               </td>
-                <td>
-                <%=product.repaymentDate%> 일
-                </td>
-                </tr>
-                <tr class="panel panel-default">
-                <td><div style="min-height:200px;">
-                    내용 : </div>
-                </td>
-                <td>
-                <% if(product.thumbnail){%>
-                <p>
-                    <img src="/uploads/<%=product.thumbnail%>" style="max-width: 100%"/>
-                </p><% } %>
-                <%=product.content%>
-                </td>
-                </tr>
-            </table>
+            <div style="padding-bottom: 10px">
+                <table class="table">
+                    <tr>
+                        <td style="min-width:100px">
+                            대출 금액 :
+                        </td>
+                        <td width="90%">
+                            <%=product.price%> 원
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            이자율 :
+                        </td>
+                        <td>
+                            <%=product.interestrate%> %
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            우대조건 :
+                        </td>
+                        <td>
+                            <%=product.preference%>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            상환일 :
+                        </td>
+                        <td>
+                            <%=product.repaymentDate%> 일
+                        </td>
+                    </tr>
+                    <tr class="panel panel-default">
+                        <td>
+                            <div style="min-height:200px;">
+                                내용 : </div>
+                        </td>
+                        <td>
+                            <% if(product.thumbnail){%>
+                                <p>
+                                    <img src="/uploads/<%=product.thumbnail%>" style="max-width: 100%" />
+                                </p>
+                                <% } %>
+                                    <%=product.content%>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div align="right">
+                <% if(user != "undefined"){%>
+                    <% if(product.username == user.username){%>
+                        <a href="/admin/products/edit/<%=product.id%>" class="btn btn-primary">수정</a>
+                        <%}else{%>
+                            <a href="/admin/products/makeTransactions/<%=product%>" class="btn btn-primary">거래 신청</a>
+                            <%}%>
+                                <%}%>
+                                    <a href="/admin/products/" class="btn btn-default">목록으로</a>
+            </div>
         </div>
-        <div align="right">
-        <% if(user != "undefined"){%>
-    <% if(product.username == user.username){%>
-    <a href="/admin/products/edit/<%=product.id%>" class="btn btn-primary">수정</a>
-    <%}else{%>
-    <a href="/admin/products/makeTransaction/<%=product%>" class="btn btn-primary">거래 신청</a>
-    <%}%><%}%>
-    <a href="/admin/products/" class="btn btn-default">목록으로</a>
-    </div>
-    </div>
-<% include ../includes/footer.ejs %>
-</script>
+        <% include ../includes/footer.ejs %>
+            </script>
