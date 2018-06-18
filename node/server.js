@@ -84,10 +84,11 @@ let recv = function (message) {
             let len = client.length;
             let n = len - parseInt((len - 1) / 3); //최소 n개의 valid-verifying이 있어야됨.
             if ((global.blockchain.getLatestBlock().index + 1 == msg.Block.Index)
-                && global.blockchain.count >= n) {
+                /*&& global.blockchain.count >= n*/) {
                 //console.log('87 : received BAR');
                 global.blockchain.appendingBlock_server_chain(msg);
                 global.blockchain.count = 0;
+                console.log(global.blockchain.chain);
                 var recent_tr = msg.Block.Transactions;
                 var query = {
                     username: undefined, account_number: undefined, balance: undefined,
@@ -112,6 +113,15 @@ let recv = function (message) {
                 }
                 else { //상환된 transaction
                     var days=getDayDiff(getTodayDate(), dueDate);
+                    let Overdue;
+                    if(days == 30){
+                        UserModel.findOne({username : recent_tr.getDebtor()}, (err, res) =>{
+                            if(!res) console.log("119 : node/server.js ERROR! CAN NOT FIND User Model");
+                            Overdue = res.overdue + 1;
+                        });
+                        UserModel.updateOne({username : recent_tr.getDebtor()}, { $set:{overdue : Overdue}});
+                        
+                    }
 
                     BankModel.findOne({ username: recent_tr.getCreditor() }, (err, res) => {
                         if (!res) console.log('121: node/server.js ERROR! CAN NOT FIND BANK MODEL!!!!');
@@ -121,6 +131,21 @@ let recv = function (message) {
                         query.balance = res.balance + recent_tr.money + (recent_tr.money * recent_tr.day_rate) * days;
 
                         res.update({ username: recent_tr.getCreditor() }, { $set: query });
+
+                    })
+                    BankModel.findOne({ username: recent_tr.getDebtor() }, (err, res) => {
+                        if (!res) console.log('128: node/server.js ERROR! CAN NOT FIND BANK MODEL!!!!');
+                        query.username = recent_tr.getDebtor();
+                        query.account_number = res.account_number;
+
+                        query.balance = res.balance - recent_tr.money - (recent_tr.money * recent_tr.day_rate) * days;
+                        
+                        if(query.balance<0){ //음수가 될 수 없으니까
+                            //@todo 강제상환 부분
+                        query.balance = res.balance + recent_tr.money + (recent_tr.money * recent_tr.day_rate) * days;
+
+                        res.update({ username: recent_tr.getCreditor() }, { $set: query });
+                        }
 
                     })
                     BankModel.findOne({ username: recent_tr.getDebtor() }, (err, res) => {
@@ -174,7 +199,7 @@ module.exports.init = function () {
 
     });
 
-    console.log('Server is opened!');
+    console.log('Blockchain Server is opened!');
 
 
     const interval = setInterval(function ping() {
@@ -244,7 +269,7 @@ module.exports.init = function () {
         //     });
             
         // });
-        UserModel.remove({ overdue : 5});
+        // UserModel.remove({ overdue : 5});
         // @todo usermodel에서 채무자 overdue +1, 5번넘으면 remove,
         // 강제거래 완료이므로 Transaction 만들고, 거래완료 true
 
