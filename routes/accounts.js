@@ -52,6 +52,9 @@ passport.use(new LocalStrategy({
     function (req, username, password, done) {
         UserModel.findOne({ username : username , password : passwordHash(password) }, function (err,user) {
             if (!user){
+                if(user.login_permit == false){
+                    return done(null, false, { message: '제한된 사용자입니다.' });
+                }
                 return done(null, false, { message: '아이디 또는 비밀번호 오류 입니다.' });
             }else{
                 //login ok, make connect
