@@ -194,7 +194,7 @@ let client_recv=function(message){ //ws 에 붙어야 함.
             blockchain.count = blockchain.count + 1;
             let len=client.length;   
             let n = len - parseInt((len-1)/3); //최소 n개의 valid-verifying이 있어야됨.
-            if((blockchain.count >= n)&&(blockchain.count_state == true)){
+            if(/*(blockchain.count >= n)&&*/(blockchain.count_state == true)){
                 //consider pass to check transactions
                 //n개 이상의 node가 블록을 수신했으면 검증 결과 배포
                 console.log('174 : start verfiying');
@@ -210,7 +210,7 @@ let client_recv=function(message){ //ws 에 붙어야 함.
             console.log('201 : verify : ',blockchain.verify);
             let len=client.length;
             let n = len - parseInt((len-1)/3); //최소 n개의 valid-verifying이 있어야됨.
-            if(blockchain.verify >= n){ 
+            if(/*blockchain.verify >= n*/true){ 
                 //consider pass to check transactions
                 //n개 이상의 node가 블록이 valid하다고 했을때
                 console.log('194 : start appendingBlock');
