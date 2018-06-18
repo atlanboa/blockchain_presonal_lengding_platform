@@ -225,17 +225,25 @@ module.exports.init = function () {
     }, 3000);
 
     const interval3 = setInterval(()=>{
-        //@todo 사용자 overdue 5회인지 체크
-        UserModel.find({ overdue : 5}, function(err, users){
-            //users : Array
-            users.forEach(ele=>{
-                var rusermodel = new RestrictedUserModel({
-                    username: ele.username,
-                });
-                rusermodel.save();
-            });
-            
+        //@todo 사용자 overdue 5회인지 체크, sample version은 overdue가 1일때 로그인 제한
+        UserModel.update({overdue: 1}, {$set: {login_permit: false} }, function(err, res){
+            if(err){
+                console.log("231 : overdue 5 User update error");
+            }else{
+                console.log("overdue 5 users are restricted");
+            }
         });
+        // UserModel.find({ overdue : 5}, function(err, users){
+        //     //users : Array
+        //     users.forEach(ele=>{
+        //         ele.update()
+        //         var rusermodel = new RestrictedUserModel({
+        //             username: ele.username,
+        //         });
+                
+        //     });
+            
+        // });
         UserModel.remove({ overdue : 5});
         // @todo usermodel에서 채무자 overdue +1, 5번넘으면 remove,
         // 강제거래 완료이므로 Transaction 만들고, 거래완료 true

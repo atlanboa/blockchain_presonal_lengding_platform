@@ -6,7 +6,8 @@
 const BlockChain=require('./Blockchain.js');
 const Block=require('./Block.js');
 const Transaction=require('./Transaction');
-const WEB_SERVER_IP=require('ip').address().toString();
+//const WEB_SERVER_IP=require('ip').address().toString();
+const WEB_SERVER_IP='202.31.201.68'
 const PORT=8889;
 const MYPORT=getRandomInt(3000,8500);
 
@@ -73,25 +74,25 @@ module.exports.connect_server = function(){
     ws.on('message',webServer_recv);
 }
 /*test for data sending and receiving*/
-// let connect_server = function(){ 
-//     ws.on('open',function(){
-//         console.log('33: Connect with Web_server_wss');
-//         var IAP={};
-//         IAP.Format='IAP';
-//         IAP.IP=IP;
-//         IAP.Port=MYPORT;
-//         ws.send(JSON.stringify(IAP));
+let connect_server = function(){ 
+    ws.on('open',function(){
+        console.log('33: Connect with Web_server_wss');
+        var IAP={};
+        IAP.Format='IAP';
+        IAP.IP=IP;
+        IAP.Port=MYPORT;
+        ws.send(JSON.stringify(IAP));
         
-//         ws.on('close',()=>{
-//             /** 서버와 연결이 끊어졌을 때 어떻게 동작해야 하는지 아래에 기술 */
-//             console.log('42: WebServer is closed!');
-//             //reconnect
-//         });
+        ws.on('close',()=>{
+            /** 서버와 연결이 끊어졌을 때 어떻게 동작해야 하는지 아래에 기술 */
+            console.log('42: WebServer is closed!');
+            //reconnect
+        });
 
-//     });
+    });
 
-//     ws.on('message',webServer_recv);
-// }
+    ws.on('message',webServer_recv);
+}
 
 let webServer_recv=function(message){
     console.log('64:webServer_recv,',message);
@@ -271,5 +272,5 @@ function getRandomInt(min, max) { //min ~ max 사이의 임의의 정수 반환
 
 
 /**main */
-// connect_server();
+connect_server();
 // test_sendBlock();

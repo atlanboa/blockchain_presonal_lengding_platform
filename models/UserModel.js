@@ -45,7 +45,11 @@ var UserSchema = new Schema({
   },
   overdue: {
       type: Number,
-      default: 1
+      default: 0
+  },
+  login_permit:{
+      type: Boolean,
+      default: true
   },
 });
 
