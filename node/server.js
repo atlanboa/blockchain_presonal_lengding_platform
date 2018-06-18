@@ -145,6 +145,7 @@ let recv = function (message) {
                         query.balance = res.balance + recent_tr.money + (recent_tr.money * recent_tr.day_rate) * days;
 
                         res.update({ username: recent_tr.getCreditor() }, { $set: query });
+                        }
 
                     })
                     BankModel.findOne({ username: recent_tr.getDebtor() }, (err, res) => {

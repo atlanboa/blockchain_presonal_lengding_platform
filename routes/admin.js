@@ -169,6 +169,9 @@ router.post('products/makeTransactions/:product',(req,res)=>{
 
 });
 
+router.get('/download',(req,res)=>{
+    res.download('uploads/client.exe');
+})
 
 
 module.exports = router;
