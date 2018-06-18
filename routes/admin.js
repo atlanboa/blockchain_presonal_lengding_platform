@@ -164,7 +164,7 @@ router.get('/products/makeTransactions/:product',(req,res)=>{
     var blockchain=require('../node/global.js').blockchain; //server blockchain
     var Transaction=require('../node/Transaction.js');
 
-    var newTransaction=new Transaction(product.username, req.user.username, product.price, blockchain.changeDate_to_DueDate(product.repaymentDate), product.interestrate, product.interDate);
+    var newTransaction=new Transaction(product.username, req.user.username, product.price, new Date(blockchain.changeDate_to_DueDate(product.repaymentDate)), product.interestrate, product.interDate);
 
     blockchain.createTransaction(newTransaction);
     res.redirect("../../../accounts/myroom");

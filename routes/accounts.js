@@ -157,8 +157,8 @@ router.post('/makeTransaction/:result',(req,res)=>{
     var info=req.params.result;
     var blockchain=require('../node/global.js').blockchain;
     var Transaction=requrie('../node/Transaction.js');
-
-    var k=new Transaction(info.creditor,info.debtor,info.money,info.dueDate,info.rate,info.rate_type);
+    
+    var k=new Transaction(info.creditor,info.debtor,info.money,new Date(info.dueDate),info.rate,info.rate_type);
     k.status=true;
     blockchain.createTransaction(k);
 

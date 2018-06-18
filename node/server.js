@@ -202,31 +202,31 @@ module.exports.init = function () {
     console.log('Blockchain Server is opened!');
 
 
-    const interval = setInterval(function ping() {
-        wss.clients.forEach((ws) => {
-            if (ws.isAlive != true) {
-                //@todo 닫혔을 때 client[] 안에 있는거 find ip 찾아서 해당 data remove, 근데 어떻게 찾는지 모름... ㅠㅠㅠㅠ 
-                let index = client.findIndex(ele => {
-                    return (ele.IP == ws._socket.remoteAddress);
-                })
+    // const interval = setInterval(function ping() {
+    //     wss.clients.forEach((ws) => {
+    //         if (ws.isAlive != true) {
+    //             //@todo 닫혔을 때 client[] 안에 있는거 find ip 찾아서 해당 data remove, 근데 어떻게 찾는지 모름... ㅠㅠㅠㅠ 
+    //             let index = client.findIndex(ele => {
+    //                 return (ele.IP == ws._socket.remoteAddress);
+    //             })
 
-                console.log('104,', client[index], 'disconnected.');
+    //             console.log('104,', client[index], 'disconnected.');
 
-                if (index != 0) {
-                    client.slice(0, index - 1).join(client.slice(index + 1, client.length - 1));
-                } else {
-                    client.shift();
-                }
+    //             if (index != 0) {
+    //                 client.slice(0, index - 1).join(client.slice(index + 1, client.length - 1));
+    //             } else {
+    //                 client.shift();
+    //             }
 
-                return ws.terminate();
-            } else {
-                //console.log('114: all alive!');
-            }
-            ws.isAlive = false;
-            ws.ping(noop);
+    //             return ws.terminate();
+    //         } else {
+    //             //console.log('114: all alive!');
+    //         }
+    //         ws.isAlive = false;
+    //         ws.ping(noop);
 
-        });
-    }, 2000);
+    //     });
+    // }, 2000);
 
     const interval2 = setInterval(() => {
         if (global.blockchain.pendingTransactions.length >= 1 && client.length != 0) {
