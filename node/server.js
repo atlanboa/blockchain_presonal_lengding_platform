@@ -95,47 +95,47 @@ let recv = function (message) {
                 }
 
                 if (!recent_tr.status) { //새로 생긴 transaction
-                    BankModel.findOne({ username: recent_tr.getCreditor() }, (err, res) => {
+                    BankModel.findOne({ username: recent_tr.creditor }, (err, res) => {
                         if (!res) console.log('99: node/server.js ERROR! CAN NOT FIND BANK MODEL!!!!');
-                        query.username = recent_tr.getCreditor();
+                        query.username = recent_tr.creditor;
                         query.account_number = res.account_number;
                         query.balance = res.balance - recent_tr.money;
-                        res.update({ username: recent_tr.getCreditor() }, { $set: query });
+                        res.update({ username: recent_tr.creditor }, { $set: query });
                     });
 
-                    BankModel.findOne({ username: recent_tr.getDebtor() }, (err, res) => {
+                    BankModel.findOne({ username: recent_tr.debtor }, (err, res) => {
                         if (!res) console.log('108: node/server.js ERROR! CAN NOT FIND BANK MODEL!!!!');
-                        query.username = recent_tr.getDebtor();
+                        query.username = recent_tr.debtor;
                         query.account_number = res.account_number;
                         query.balance = res.balance + recent_tr.money;
-                        res.update({ username: recent_tr.getDebtor() }, { $set: query });
+                        res.update({ username: recent_tr.debtor }, { $set: query });
                     });
                 }
                 else { //상환된 transaction
                     var days=getDayDiff(getTodayDate(), dueDate);
                     let Overdue;
                     if(days == 30){
-                        UserModel.findOne({username : recent_tr.getDebtor()}, (err, res) =>{
+                        UserModel.findOne({username : recent_tr.debtor}, (err, res) =>{
                             if(!res) console.log("119 : node/server.js ERROR! CAN NOT FIND User Model");
                             Overdue = res.overdue + 1;
                         });
-                        UserModel.updateOne({username : recent_tr.getDebtor()}, { $set:{overdue : Overdue}});
+                        UserModel.updateOne({username : recent_tr.debtor}, { $set:{overdue : Overdue}});
                         
                     }
 
                     BankModel.findOne({ username: recent_tr.getCreditor() }, (err, res) => {
                         if (!res) console.log('121: node/server.js ERROR! CAN NOT FIND BANK MODEL!!!!');
-                        query.username = recent_tr.getCreditor();
+                        query.username = recent_tr.creditor;
                         query.account_number = res.account_number;
 
                         query.balance = res.balance + recent_tr.money + (recent_tr.money * recent_tr.day_rate) * days;
 
-                        res.update({ username: recent_tr.getCreditor() }, { $set: query });
+                        res.update({ username: recent_tr.creditor }, { $set: query });
 
                     })
-                    BankModel.findOne({ username: recent_tr.getDebtor() }, (err, res) => {
+                    BankModel.findOne({ username: recent_tr.debtor }, (err, res) => {
                         if (!res) console.log('128: node/server.js ERROR! CAN NOT FIND BANK MODEL!!!!');
-                        query.username = recent_tr.getDebtor();
+                        query.username = recent_tr.debtor;
                         query.account_number = res.account_number;
 
                         query.balance = res.balance - recent_tr.money - (recent_tr.money * recent_tr.day_rate) * days;
@@ -144,13 +144,13 @@ let recv = function (message) {
                             //@todo 강제상환 부분
                         query.balance = res.balance + recent_tr.money + (recent_tr.money * recent_tr.day_rate) * days;
 
-                        res.update({ username: recent_tr.getCreditor() }, { $set: query });
+                        res.update({ username: recent_tr.creditor }, { $set: query });
                         }
 
                     })
-                    BankModel.findOne({ username: recent_tr.getDebtor() }, (err, res) => {
+                    BankModel.findOne({ username: recent_tr.debtor }, (err, res) => {
                         if (!res) console.log('128: node/server.js ERROR! CAN NOT FIND BANK MODEL!!!!');
-                        query.username = recent_tr.getDebtor();
+                        query.username = recent_tr.debtor;
                         query.account_number = res.account_number;
 
                         query.balance = res.balance - recent_tr.money - (recent_tr.money * recent_tr.day_rate) * days;
@@ -160,7 +160,7 @@ let recv = function (message) {
                             query.balance=0;
                         }
 
-                        res.update({ username: recent_tr.getDebtor() }, { $set: query });
+                        res.update({ username: recent_tr.debtor }, { $set: query });
                     })
                 }
 

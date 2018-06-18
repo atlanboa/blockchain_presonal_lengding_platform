@@ -300,7 +300,7 @@ module.exports = class Blockchain {
     changeStringChain_to_BlockChain(arr) {
         this.chain.pop(); //pop genesis block.
         arr.forEach(ele => {
-            this.chain.push(new Block(ele.timestamp, new Transaction(ele.transactions.creditor, ele.transactions.debtor, ele.transactions.money, ele.transactions.duedate, ele.transactions.rate, ele.transactions.status), ele.previousHash, ele.index));
+            this.chain.push(new Block(ele.timestamp, new Transaction(ele.transactions.creditor, ele.transactions.debtor, ele.transactions.money, new Date(ele.transactions.duedate), ele.transactions.rate, undefined), ele.previousHash, ele.index));
         })
 
     }
