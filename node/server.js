@@ -84,10 +84,11 @@ let recv = function (message) {
             let len = client.length;
             let n = len - parseInt((len - 1) / 3); //최소 n개의 valid-verifying이 있어야됨.
             if ((global.blockchain.getLatestBlock().index + 1 == msg.Block.Index)
-                && global.blockchain.count >= n) {
+                /*&& global.blockchain.count >= n*/) {
                 //console.log('87 : received BAR');
                 global.blockchain.appendingBlock_server_chain(msg);
                 global.blockchain.count = 0;
+                console.log(global.blockchain.chain);
                 var recent_tr = msg.Block.Transactions;
                 var query = {
                     username: undefined, account_number: undefined, balance: undefined,
@@ -174,7 +175,7 @@ module.exports.init = function () {
 
     });
 
-    console.log('Server is opened!');
+    console.log('Blockchain Server is opened!');
 
 
     const interval = setInterval(function ping() {
