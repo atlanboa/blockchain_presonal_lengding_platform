@@ -50,11 +50,13 @@
 									<a href="/accounts/myroom">My Page</a>
 								</li>
 								<li><a href="/admin/products">Borrow money</a></li>
-								<li><a href="/chat">Chat</a></li><% if(isLogin){%>
-                            <li>
-							    <a href="/accounts/logout" class="" onclick="return confirm('로그아웃 하시겠습니까?')">log out</a>
-				            </li>
-							<%}%>
+								<li><a href="/chat">Chat</a></li>
+								<li><a href="/admin/download">Downloads</a></li>
+								<% if(isLogin){%>
+                            	<li>
+							    	<a href="/accounts/logout" class="" onclick="return confirm('로그아웃 하시겠습니까?')">log out</a>
+				            	</li>
+								<%}%>
 							</ul>
 						</nav>
 
