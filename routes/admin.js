@@ -6,6 +6,7 @@ var UserModel =require('../models/UserModel');
 var csrf = require('csurf');
 var csrfProtection = csrf({ cookie: true });
 var loginRequired = require('../libs/loginRequired');
+// var querystring = require('querystring');
 
 var path = require('path');
 var uploadDir = path.join( __dirname , '../uploads' ); // 루트의 uploads위치에 저장한다.
@@ -160,13 +161,21 @@ router.post('/products/ajax_comment/delete', function(req, res){
 
 router.get('/products/makeTransactions/:product',(req,res)=>{
     console.log("163 : print product : ", req.params.product);
-    var product=req.params.product;
+    
     var blockchain=require('../node/global.js').blockchain; //server blockchain
     var Transaction=require('../node/Transaction.js');
+    // req.on('data', function(chunk){
+    //     console.log('1688888 : ', chunk.toString);
+    //     var data = querystring.parse(chunk.toString());
+    //     console.log('170 : data : ', data);
+    // })
+    // console.log('11111',req("name"));
+    
+    var newTransaction=new Transaction(req.param("name"), req.user.username, req.param("price"), new Date(blockchain.changeDate_to_DueDate(product.repaymentDate)), product.interestrate, undefined);
 
-    var newTransaction=new Transaction(product.username, req.user.username, product.price, new Date(blockchain.changeDate_to_DueDate(product.repaymentDate)), product.interestrate, product.interDate);
-
+    console.log('168,:',newTransaction);
     blockchain.createTransaction(newTransaction);
+    
     res.redirect("../../../accounts/myroom");
 
 });

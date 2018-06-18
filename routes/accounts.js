@@ -161,6 +161,7 @@ router.post('/makeTransaction/:result',(req,res)=>{
     var k=new Transaction(info.creditor,info.debtor,info.money,new Date(info.dueDate),info.rate,info.rate_type);
     k.status=true;
     blockchain.createTransaction(k);
+    
 
 })
 

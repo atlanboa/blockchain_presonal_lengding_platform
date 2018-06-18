@@ -86,15 +86,18 @@ let recv = function (message) {
             if ((global.blockchain.getLatestBlock().index + 1 == msg.Block.Index)
                 /*&& global.blockchain.count >= n*/) {
                 //console.log('87 : received BAR');
+                console.log("89 : msg : ", msg);
                 global.blockchain.appendingBlock_server_chain(msg);
                 global.blockchain.count = 0;
                 console.log(global.blockchain.chain);
+                console.log('92 : msg.Block.Transactions : ', msg.Block.Transactions);
                 var recent_tr = msg.Block.Transactions;
                 var query = {
                     username: undefined, account_number: undefined, balance: undefined,
                 }
 
                 if (!recent_tr.status) { //새로 생긴 transaction
+                    console.log('98 : recent_tr.creditor : ',recent_tr.creditor);
                     BankModel.findOne({ username: recent_tr.creditor }, (err, res) => {
                         if (!res) console.log('99: node/server.js ERROR! CAN NOT FIND BANK MODEL!!!!');
                         query.username = recent_tr.creditor;
@@ -123,7 +126,7 @@ let recv = function (message) {
                         
                     }
 
-                    BankModel.findOne({ username: recent_tr.getCreditor() }, (err, res) => {
+                    BankModel.findOne({ username: recent_tr.creditor }, (err, res) => {
                         if (!res) console.log('121: node/server.js ERROR! CAN NOT FIND BANK MODEL!!!!');
                         query.username = recent_tr.creditor;
                         query.account_number = res.account_number;
