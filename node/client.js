@@ -178,13 +178,14 @@ let client_recv=function(message){ //ws 에 붙어야 함.
         //BRR send하는 코드
         blockchain.count += 2;
         console.log('160 : count : ', blockchain.count);
+        console.log('181 : client.js, receivedBDS : ',msg);
 
         if(blockchain.getLatestBlock().index+1 == msg.Block.Index){
             //받은 BDS 데이터의 블록 index가 다음 생성될 블록의 index와 일치하면
             //blockchain.tempBlock에 저장
 
             blockchain.createTempBlock2(msg.Block.Timestamp,object_to_Transaction(msg.Block.Transactions),msg.Block.PreviousHash,msg.Block.Index);
-            
+            console.log("188, before sendingBRR, tempBlock : ",blockchain.tempBlock);
             wss.broadcast(blockchain.makeBRR());
         }
     }
@@ -223,8 +224,8 @@ let client_recv=function(message){ //ws 에 붙어야 함.
 
 }
 
-var object_to_Transaction=function(msg) {
-    return new Transaction(msg.creditor,msg.debtor,msg.money);
+var object_to_Transaction = function (msg) {
+    return new Transaction(msg.creditor, msg.debtor, msg.money, msg.dueDate, msg.rate, msg.rate_type);
 }
 
 let server_recv=function(message){ //wss에 붙어야 함.
@@ -243,8 +244,10 @@ function verifiedResult(){
 }
 
 function sendBlock(msg){
-    blockchain.pendingTransactions.push(new Transaction(msg.Transaction.creditor,msg.Transaction.debtor,msg.Transaction.money, msg.Transaction.duedate, msg.Transaction.rate, msg.Transaction.status));
+    // console.log("246, client.js due")
+    blockchain.pendingTransactions.push(new Transaction(msg.Transaction.creditor,msg.Transaction.debtor,msg.Transaction.money, msg.Transaction.dueDate, msg.Transaction.rate, msg.Transaction.status));
     blockchain.createTempBlock();
+    console.log("248 client , tempBlock : ", blockchain.tempBlock);
     blockchain.count++;
     wss.broadcast(blockchain.makeBDS());
 }

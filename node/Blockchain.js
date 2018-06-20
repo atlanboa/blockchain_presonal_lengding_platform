@@ -35,11 +35,11 @@ module.exports = class Blockchain {
     }
 
     createGenesisBlock() {
-        
+
         var genesisBlock = new Block(Date.parse("2018-06-17"), new Transaction("1", "2", 100000, Date.parse("2018-06-20"), "주"), "0", 0);
         return genesisBlock;
     }
-    testappendBlock(){
+    testappendBlock() {
         this.chain.push(new Block(Date.parse("2018-06-17"), new Transaction("2", "1", 95000, Date.parse("2018-06-21"), "주"), "0", 0));
     }
 
@@ -96,12 +96,33 @@ module.exports = class Blockchain {
         this.chain.find(ele => {
             var tt = ele.getTransaction();
 
-            if (tt.getCreditor() == userName) {
+            if (tt.creditor == userName) {
                 tt.dueDate = new Date(tt.dueDate).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' });
                 console.log('9393:', tt.dueDate);
-                transaction_creditor.push(tt);
-            } else if (tt.getDebtor() == userName) {
-                transaction_debtor.push(tt);
+                if (tt.status == true) {
+                    for (var trans in transaction_creditor) {
+                        if (transaction_creditor[trans].dueDate == tt.dueDate && transaction_creditor[trans].money == tt.money) {
+                            transaction_creditor[trans] = tt;
+                            break;
+                        }
+                    }
+                }else{
+                    transaction_creditor.push(tt);
+                }
+
+                
+            } else if (tt.debtor == userName) {
+                tt.dueDate = new Date(tt.dueDate).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' });
+                if (tt.status == true) {
+                    for (var trans in transaction_debtor) {
+                        if (transaction_debtor[trans].dueDate == tt.dueDate && transaction_debtor[trans].money == tt.money) {
+                            transaction_debtor[trans] = tt;
+                            break;
+                        }
+                    }
+                }else{
+                    transaction_debtor.push(tt);
+                }
             }
         });
 
@@ -177,6 +198,7 @@ module.exports = class Blockchain {
         BAR.Block.PreviousHash = block.previousHash;
         BAR.Block.Timestamp = block.timestamp;
         BAR.Block.Transactions = block.transactions;
+        console.log("180 : makeBAR : ", block.transactions);
         BAR.Block.Hash = block.hash;
         BAR.Block.Index = block.index;
         return BAR;

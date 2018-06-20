@@ -13,7 +13,7 @@ module.exports=class Transaction{
      * @description Transaction Class. uasge: const transaction = new Transaction(creditor, debtor, money, date, rate)
      * 일 이자율로 고정 (계산하기 편함)
      */
-    constructor(creditor, debtor, money, date,rate,rate_type){
+    constructor(creditor, debtor, money, date, rate, rate_type) {
         this.creditor = creditor;
         this.debtor = debtor;
         this.money = money;
