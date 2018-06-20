@@ -225,7 +225,7 @@ let client_recv=function(message){ //ws 에 붙어야 함.
 }
 
 var object_to_Transaction = function (msg) {
-    return new Transaction(msg.creditor, msg.debtor, msg.money, msg.dueDate, msg.rate, msg.rate_type);
+    return new Transaction(msg.creditor, msg.debtor, msg.money, msg.dueDate, msg.rate, msg.rate_type, msg.status);
 }
 
 let server_recv=function(message){ //wss에 붙어야 함.
@@ -245,7 +245,9 @@ function verifiedResult(){
 
 function sendBlock(msg){
     // console.log("246, client.js due")
-    blockchain.pendingTransactions.push(new Transaction(msg.Transaction.creditor,msg.Transaction.debtor,msg.Transaction.money, msg.Transaction.dueDate, msg.Transaction.rate, msg.Transaction.status));
+    var t = new Transaction(msg.Transaction.creditor,msg.Transaction.debtor,msg.Transaction.money, msg.Transaction.dueDate, msg.Transaction.rate, msg.Transaction.rate_type, msg.Transaction.status);
+    
+    blockchain.pendingTransactions.push(t);
     blockchain.createTempBlock();
     console.log("248 client , tempBlock : ", blockchain.tempBlock);
     blockchain.count++;

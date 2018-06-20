@@ -13,14 +13,14 @@ module.exports=class Transaction{
      * @description Transaction Class. uasge: const transaction = new Transaction(creditor, debtor, money, date, rate)
      * 일 이자율로 고정 (계산하기 편함)
      */
-    constructor(creditor, debtor, money, date, rate, rate_type) {
+    constructor(creditor, debtor, money, date, rate, rate_type, status) {
         this.creditor = creditor;
         this.debtor = debtor;
         this.money = money;
         this.dueDate = date;
         this.rate = rate;
         this.rate_type=rate_type;
-        this.status = false;
+        this.status = status;
         
         switch(this.rate_type){
             case '연':

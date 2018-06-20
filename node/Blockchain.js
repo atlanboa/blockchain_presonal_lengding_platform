@@ -36,11 +36,11 @@ module.exports = class Blockchain {
 
     createGenesisBlock() {
 
-        var genesisBlock = new Block(Date.parse("2018-06-17"), new Transaction("1", "2", 100000, Date.parse("2018-06-20"), "주"), "0", 0);
+        var genesisBlock = new Block(Date.parse("2018-06-17"), new Transaction("1", "2", 100000, Date.parse("2018-06-20"), "주"), "0", 0, false);
         return genesisBlock;
     }
     testappendBlock() {
-        this.chain.push(new Block(Date.parse("2018-06-17"), new Transaction("2", "1", 95000, Date.parse("2018-06-21"), "주"), "0", 0));
+        this.chain.push(new Block(Date.parse("2018-06-17"), new Transaction("2", "1", 95000, Date.parse("2018-06-21"), "주"), "0", 0, false));
     }
 
     getLatestBlock() {
@@ -322,14 +322,14 @@ module.exports = class Blockchain {
     changeStringChain_to_BlockChain(arr) {
         this.chain.pop(); //pop genesis block.
         arr.forEach(ele => {
-            this.chain.push(new Block(ele.timestamp, new Transaction(ele.transactions.creditor, ele.transactions.debtor, ele.transactions.money, new Date(ele.transactions.duedate), ele.transactions.rate, undefined), ele.previousHash, ele.index));
+            this.chain.push(new Block(ele.timestamp, new Transaction(ele.transactions.creditor, ele.transactions.debtor, ele.transactions.money, new Date(ele.transactions.duedate), ele.transactions.rate, undefined, ele.transactions.status), ele.previousHash, ele.index));
         })
 
     }
 
     changeString_to_Transactions(arr) {
         arr.forEach(ele => {
-            this.pendingTransactions.push(new Transaction(ele.creditor, ele.debtor, ele.money, ele.transactions.duedate, ele.transactions.rate, ele.transactions.status));
+            this.pendingTransactions.push(new Transaction(ele.creditor, ele.debtor, ele.money, ele.transactions.duedate, ele.transactions.rate, ele.transactions.rate_type, ele.transaction.status));
         })
     }
 
