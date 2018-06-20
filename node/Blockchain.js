@@ -31,17 +31,17 @@ module.exports = class Blockchain {
 
         //this.miningReward = 100;
         //this.difficulty = 2;
-        this.testappendBlock();
+        // this.testappendBlock();
     }
 
     createGenesisBlock() {
 
-        var genesisBlock = new Block(Date.parse("2018-06-17"), new Transaction("1", "2", 100000, Date.parse("2018-06-20"), "주"), "0", 0, false);
+        var genesisBlock = new Block(Date.parse("2018-06-17"), new Transaction("1", "2", 96000, Date.parse("2018-06-21"), "주", undefined, false), "0", 0, false);
         return genesisBlock;
     }
-    testappendBlock() {
-        this.chain.push(new Block(Date.parse("2018-06-17"), new Transaction("2", "1", 95000, Date.parse("2018-06-21"), "주"), "0", 0, false));
-    }
+    // testappendBlock() {
+    //     this.chain.push(new Block(Date.parse("2018-06-17"), new Transaction("2", "1", 95000, Date.parse("2018-06-21"), "주", undefined, false), "0", 1, false));
+    // }
 
     getLatestBlock() {
         return this.chain[this.chain.length - 1];
@@ -95,7 +95,7 @@ module.exports = class Blockchain {
         var transaction_debtor = [];
         this.chain.find(ele => {
             var tt = ele.getTransaction();
-
+            var index = 0;
             if (tt.creditor == userName) {
                 tt.dueDate = new Date(tt.dueDate).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' });
                 console.log('9393:', tt.dueDate);

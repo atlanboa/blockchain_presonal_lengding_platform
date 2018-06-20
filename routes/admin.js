@@ -169,7 +169,7 @@ router.get('/products/makeTransactions/:id',(req,dd)=>{
 
     ProductsModel.findOne({id:req.params.id},(err,res)=>{
         console.log("171, admin.js , date : ",blockchain.changeDate_to_DueDate(res.repaymentDate));
-        var newTransaction = new Transaction(res.name, req.user.username, res.price, blockchain.changeDate_to_DueDate(res.repaymentDate), res.interestrate, undefined);
+        var newTransaction = new Transaction(res.name, req.user.username, res.price, blockchain.changeDate_to_DueDate(res.repaymentDate), res.interestrate, undefined, false);
         console.log("173 : transa : ", newTransaction);
         blockchain.createTransaction(newTransaction);
         dd.redirect('../../../accounts/myroom');

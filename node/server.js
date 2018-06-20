@@ -160,7 +160,8 @@ let recv = function (message) {
                     BankModel.findOne({ username: recent_tr.creditor }, (err, res) => {
                         if (!res) console.log('121: node/server.js ERROR! CAN NOT FIND BANK MODEL!!!!');
                         let vbalance;
-                        vbalance = res.balance + recent_tr.money + (recent_tr.money * 1.1/*recent_tr.day_rate*/) * days;
+                        vbalance = res.balance + parseInt(recent_tr.money) + (recent_tr.money * 1.1/*recent_tr.day_rate*/) * days;
+                        console.log("164, server.js vbalance : ", vbalance);
                         let query = {
                              balance: vbalance,
                         }
@@ -174,7 +175,7 @@ let recv = function (message) {
                         if (!res) console.log('128: node/server.js ERROR! CAN NOT FIND BANK MODEL!!!!');
                         let vbalance ;
                         vbalance = res.balance - recent_tr.money - (recent_tr.money * 1.1/*recent_tr.day_rate*/) * days;
-
+                        console.log("178, server.js vbalance : ", vbalance);
                         let query = {
                              balance: vbalance,
                         }
@@ -183,7 +184,11 @@ let recv = function (message) {
                             //@todo 강제상환 부분
                        
 
-                            BankModel.updateOne({ username: recent_tr.creditor }, { $set: query }, (err)=>{
+                            BankModel.updateOne({ username: recent_tr.debtor }, { $set: query }, (err)=>{
+                                if(err) console.log('node/server.js,189',err);
+                            });
+                        }else{
+                            BankModel.updateOne({ username: recent_tr.debtor }, { $set: query }, (err)=>{
                                 if(err) console.log('node/server.js,189',err);
                             });
                         }
