@@ -123,7 +123,7 @@ router.get('/myroom', function(req,res){
         var object=blockchain.findTransaction(req.user.username);
         console.log('account.js:122:',object);
         console.log('122 : username print : ', req.user.username);
-        VirtualBankModel.findOne({ username : '1'}, (err, doc)=>{
+        VirtualBankModel.findOne({ username : req.user.username}, (err, doc)=>{
             if(!doc) console.log('123 : CAN NOT FIND USER BANK ACCOUNT');
             balance = doc.balance;
             console.log('125 : print balance : ',balance);
@@ -153,15 +153,18 @@ router.post('/charge/:id',function(req,res){
     });
 });
 
-router.post('/makeTransaction/:result',(req,res)=>{
-    var info=req.params.result;
+router.get('/makeTransaction/:data',(req,res)=>{
+    var info=req.params.data;
+    console.log("158, info, account.js : ", info);
+    var data = info.split('@')
     var blockchain=require('../node/global.js').blockchain;
-    var Transaction=requrie('../node/Transaction.js');
+    var Transaction=require('../node/Transaction.js');
     
-    var k=new Transaction(info.creditor,info.debtor,info.money,new Date(info.dueDate),info.rate,info.rate_type);
+    var k=new Transaction(data[0],req.user.username,data[1], blockchain.changeDate_to_LocaleDateString(),'주',undefined);
     k.status=true;
+    console.log("164, 상환 transaction : ", k);
     blockchain.createTransaction(k);
-    
+    res.redirect('../../../accounts/myroom');
 
 })
 

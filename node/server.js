@@ -161,7 +161,7 @@ let recv = function (message) {
                     BankModel.findOne({ username: recent_tr.creditor }, (err, res) => {
                         if (!res) console.log('121: node/server.js ERROR! CAN NOT FIND BANK MODEL!!!!');
                         let vbalance;
-                        vbalance = res.balance + recent_tr.money + (recent_tr.money * recent_tr.day_rate) * days;
+                        typeofvbalance = res.balance + recent_tr.money + (recent_tr.money * 1.1/*recent_tr.day_rate*/) * days;
 
                         let query = {
                              balance: vbalance,
@@ -175,7 +175,7 @@ let recv = function (message) {
                     BankModel.findOne({ username: recent_tr.debtor }, (err, res) => {
                         if (!res) console.log('128: node/server.js ERROR! CAN NOT FIND BANK MODEL!!!!');
                         let vbalance ;
-                        vbalance = res.balance - recent_tr.money - (recent_tr.money * recent_tr.day_rate) * days;
+                        vbalance = res.balance - recent_tr.money - (recent_tr.money * 1.1/*recent_tr.day_rate*/) * days;
 
                         let query = {
                              balance: vbalance,
@@ -275,7 +275,8 @@ module.exports.init = function () {
                 Transaction: global.blockchain.pendingTransactions.shift(),
             };
             console.log("250, server.js : sendCRR : ",k.Transaction);
-            k.Transaction.dueDate=k.Transaction.dueDate.toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' });
+            // k.Transaction.dueDate= 
+            // k.Transaction.dueDate.toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' });
             iter.next().value.send(JSON.stringify(k));
             
             console.log('126, Send CCR to', client[random_int].IP, ':', client[random_int].Port);

@@ -339,6 +339,12 @@ module.exports = class Blockchain {
         var options = { year: 'numeric', month: '2-digit', day: '2-digit' };
         return t.toLocaleDateString('ko-KR', options);
     }
+    
+    changeDate_to_LocaleDateString() {
+        var t = new Date();
+        var options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+        return t.toLocaleDateString('ko-KR', options);
+    }
 
 
 }

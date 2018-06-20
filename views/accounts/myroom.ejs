@@ -83,19 +83,19 @@
                     <ul>
                         <li>
                             <li>
-                                채권자:<%=object.creditor_list[result].creditor%>
+                                채권자:<%=object.debtor_list[result].creditor%>
                             </li>
-                            <li>빌린금액:<%=object.creditor_list[result].money%>
+                            <li>빌린금액:<%=object.debtor_list[result].money%>
                             </li>
-                            <li>만료일:<%=object.creditor_list[result].dueDate%>
+                            <li>만료일:<%=object.debtor_list[result].dueDate%>
                             </li>
-                            <%if(result.status==true){%>
+                            <%if(object.debtor_list[result].status==true){%>
                             <a class="btn" style="background-color:rgb(132, 134, 132);">상환완료</a>
                             <%}else{
                             if(date==result.dueDate){%>
                                 <a class="btn .btn-danger">강제상환</a>
                             <%}else{%>
-                                <a href="/makeTransaction/<%=object.creditor_list[result]%>" class="btn" style="background-color:rgba(32,177,67,1)">상환하기</a>
+                                <a href="/accounts/makeTransaction/<%=object.debtor_list[result].creditor%>@<%=object.debtor_list[result].money%>" class="btn" style="background-color:rgba(32,177,67,1)">상환하기</a>
                             <%}}%>
                         </li>
                     </ul>

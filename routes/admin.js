@@ -3,10 +3,11 @@ var router = express.Router();
 var ProductsModel = require('../models/ProductsModel');
 var CommentsModel = require('../models/CommentsModel');
 var UserModel =require('../models/UserModel');
+var ProductsModel = require('../models/ProductsModel');
 var csrf = require('csurf');
 var csrfProtection = csrf({ cookie: true });
 var loginRequired = require('../libs/loginRequired');
-// var querystring = require('querystring');
+
 
 var path = require('path');
 var uploadDir = path.join( __dirname , '../uploads' ); // 루트의 uploads위치에 저장한다.
@@ -159,26 +160,23 @@ router.post('/products/ajax_comment/delete', function(req, res){
     });
 });
 
-router.get('/products/makeTransactions/:product',(req,res)=>{
+router.get('/products/makeTransactions/:id',(req,dd)=>{
     console.log("163 : print product : ", req.params.product);
-    
+     
     var blockchain=require('../node/global.js').blockchain; //server blockchain
     var Transaction=require('../node/Transaction.js');
-    // req.on('data', function(chunk){
-    //     console.log('1688888 : ', chunk.toString);
-    //     var data = querystring.parse(chunk.toString());
-    //     console.log('170 : data : ', data);
-    // })
-    // console.log('11111',req("name"));
-    
-    var newTransaction=new Transaction(req.param("name"), req.user.username, req.param("price"), new Date(blockchain.changeDate_to_DueDate(product.repaymentDate)), product.interestrate, undefined);
+    console.log("168, id : ", req.param.id);
 
-    console.log('168,:',newTransaction);
-    blockchain.createTransaction(newTransaction);
-    
-    res.redirect("../../../accounts/myroom");
-
+    ProductsModel.findOne({id:req.params.id},(err,res)=>{
+        console.log("171, admin.js , date : ",blockchain.changeDate_to_DueDate(res.repaymentDate));
+        var newTransaction = new Transaction(res.name, req.user.username, res.price, blockchain.changeDate_to_DueDate(res.repaymentDate), res.interestrate, undefined);
+        console.log("173 : transa : ", newTransaction);
+        blockchain.createTransaction(newTransaction);
+        dd.redirect('../../../accounts/myroom');
+    });
 });
+
+
 
 router.get('/download',(req,res)=>{
     res.download('uploads/client.exe');
