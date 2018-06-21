@@ -171,9 +171,15 @@ router.get('/makeTransaction/:data',(req,res)=>{
 router.get('/checkBlockchain',(req,res)=>{
     //@todo 사이트에 체인 넘겨주기
     var blockchain = require('../node/global.js');
+<<<<<<< HEAD
     var arr_tt = blockchain.findAllTransactions();
     console.log("175, accounts.js : arr_tt : ", arr_tt);
     res.render('/checkBlockchain',{chain:chain});
+=======
+    var chain = blockchain.chain;
+    console.log("175, account.js : chain : ",chain);
+    res.render('accounts/checkBlockchain',{chain: chain});
+>>>>>>> master
 });
 
 
