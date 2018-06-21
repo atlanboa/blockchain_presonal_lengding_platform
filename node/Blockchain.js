@@ -147,6 +147,14 @@ module.exports = class Blockchain {
 
         return result;
     }
+    findAllTransactions(){
+        var result = [];
+        this.chain.find(ele => {
+            var tt = ele.getTransaction();
+            result.push(tt);
+        })
+        return result;
+    }
 
     verifyBlock() {
         let previousblock = this.getLatestBlock();
