@@ -168,5 +168,10 @@ router.get('/makeTransaction/:data',(req,res)=>{
 
 })
 
+router.get('/checkBlockchain',(req,res)=>{
+    //@todo 사이트에 체인 넘겨주기
+    var blockchain = require('../node/global.js');
+});
+
 
 module.exports = router;
