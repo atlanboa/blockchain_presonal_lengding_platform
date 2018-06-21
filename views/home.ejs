@@ -30,9 +30,11 @@
 							</header>
 							<% if(isLogin){%>
                             <footer>
+                               <a href="/accounts/myroom" class="btn btn-lg btn-danger">My Page</a>
                                 <a href="/admin/products" class="btn btn-lg btn-danger">Borrow</a>
-                                <a href="/accounts/login" class="btn btn-lg btn-danger">Invest</a>
-							    <a href="/accounts/myroom" class="btn btn-lg btn-danger">My Page</a>
+                               <a href="/accounts/checkBlockchain" class="btn btn-lg btn-danger">Chain</a>
+                               <a href="/accounts/logout" class="btn btn-lg btn-danger" onclick="return confirm('로그아웃 하시겠습니까?')">Logout</a>
+                                
 				            </footer>
 							<%}else{%>
 							<footer>
@@ -54,7 +56,7 @@
 								<li><a href="/admin/download">Downloads</a></li>
 								<% if(isLogin){%>
                             	<li>
-							    	<a href="/accounts/logout" class="" onclick="return confirm('로그아웃 하시겠습니까?')">log out</a>
+							    	<a href="/accounts/logout" class="" onclick="return confirm('로그아웃 하시겠습니까?')">Logout</a>
 				            	</li>
 								<%}%>
 							</ul>

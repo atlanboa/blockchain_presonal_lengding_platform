@@ -1,0 +1,36 @@
+<% include ../includes/header.ejs %>
+<div style="padding: 2%;">
+    <table class="table table-bordered table-hover">
+        <tr>
+            <th>채권자</th>
+            <th>채무자</th>
+            <th>금액</th>
+            <th>이자율</th>
+            <th>상환기간</th>
+            <th>거래완료 유무</th>
+        </tr>
+        <%chain.forEach(function(block){%>
+        <tr>
+            <td>
+                <%=block.transactions.creditor%>
+            </td>
+            <td>
+                <%=block.transactions.debtor%>
+            </td>
+            <td>
+                <%=block.transactions.money%> 원
+            </td>
+            <td>
+                <%=block.transactions.rate%> %
+            </td>
+            <td>
+                <%=block.transactions.dueDate%>
+            </td>
+            <td>
+                <%=block.transactions.status%>
+            </td>
+        </tr>
+        <% }); %>
+    </table>
+
+<% include ../includes/footer.ejs %>

@@ -178,13 +178,14 @@ let client_recv=function(message){ //ws 에 붙어야 함.
         //BRR send하는 코드
         blockchain.count += 2;
         console.log('160 : count : ', blockchain.count);
+        console.log('181 : client.js, receivedBDS : ',msg);
 
         if(blockchain.getLatestBlock().index+1 == msg.Block.Index){
             //받은 BDS 데이터의 블록 index가 다음 생성될 블록의 index와 일치하면
             //blockchain.tempBlock에 저장
 
             blockchain.createTempBlock2(msg.Block.Timestamp,object_to_Transaction(msg.Block.Transactions),msg.Block.PreviousHash,msg.Block.Index);
-            
+            console.log("188, before sendingBRR, tempBlock : ",blockchain.tempBlock);
             wss.broadcast(blockchain.makeBRR());
         }
     }
@@ -194,7 +195,7 @@ let client_recv=function(message){ //ws 에 붙어야 함.
             blockchain.count = blockchain.count + 1;
             let len=client.length;   
             let n = len - parseInt((len-1)/3); //최소 n개의 valid-verifying이 있어야됨.
-            if(/*(blockchain.count >= n)&&*/(blockchain.count_state == true)){
+            if((blockchain.count >= n)&&(blockchain.count_state == true)){
                 //consider pass to check transactions
                 //n개 이상의 node가 블록을 수신했으면 검증 결과 배포
                 console.log('174 : start verfiying');
@@ -210,7 +211,7 @@ let client_recv=function(message){ //ws 에 붙어야 함.
             console.log('201 : verify : ',blockchain.verify);
             let len=client.length;
             let n = len - parseInt((len-1)/3); //최소 n개의 valid-verifying이 있어야됨.
-            if(/*blockchain.verify >= n*/true){ 
+            if(blockchain.verify >= n){ 
                 //consider pass to check transactions
                 //n개 이상의 node가 블록이 valid하다고 했을때
                 console.log('194 : start appendingBlock');
@@ -223,8 +224,8 @@ let client_recv=function(message){ //ws 에 붙어야 함.
 
 }
 
-var object_to_Transaction=function(msg) {
-    return new Transaction(msg.creditor,msg.debtor,msg.money);
+var object_to_Transaction = function (msg) {
+    return new Transaction(msg.creditor, msg.debtor, msg.money, msg.dueDate, msg.rate, msg.rate_type, msg.status);
 }
 
 let server_recv=function(message){ //wss에 붙어야 함.
@@ -243,8 +244,12 @@ function verifiedResult(){
 }
 
 function sendBlock(msg){
-    blockchain.pendingTransactions.push(new Transaction(msg.Transaction.creditor,msg.Transaction.debtor,msg.Transaction.money, msg.Transaction.duedate, msg.Transaction.rate, msg.Transaction.status));
+    // console.log("246, client.js due")
+    var t = new Transaction(msg.Transaction.creditor,msg.Transaction.debtor,msg.Transaction.money, msg.Transaction.dueDate, msg.Transaction.rate, msg.Transaction.rate_type, msg.Transaction.status);
+    
+    blockchain.pendingTransactions.push(t);
     blockchain.createTempBlock();
+    console.log("248 client , tempBlock : ", blockchain.tempBlock);
     blockchain.count++;
     wss.broadcast(blockchain.makeBDS());
 }

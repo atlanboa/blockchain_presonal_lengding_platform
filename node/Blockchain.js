@@ -5,7 +5,7 @@
  * @example var chain=new BlockChain()
  */
 var Block = require('./block.js');
-var Transaction=require('./Transaction.js');
+var Transaction = require('./Transaction.js');
 
 module.exports = class Blockchain {
     /**
@@ -28,37 +28,42 @@ module.exports = class Blockchain {
         this.count = 0;
         this.count_state = true;
         this.tempBlock = undefined;
-    
+
         //this.miningReward = 100;
         //this.difficulty = 2;
+        // this.testappendBlock();
     }
 
-    createGenesisBlock() { 
-        var genesisBlock = new Block(Date.parse("2017-01-01"), new Transaction(), "0", 0);
+    createGenesisBlock() {
+
+        var genesisBlock = new Block(Date.parse("2018-06-17"), new Transaction("1", "2", 96000, Date.parse("2018-06-21"), "주", undefined, false), "0", 0, false);
         return genesisBlock;
     }
+    // testappendBlock() {
+    //     this.chain.push(new Block(Date.parse("2018-06-17"), new Transaction("2", "1", 95000, Date.parse("2018-06-21"), "주", undefined, false), "0", 1, false));
+    // }
 
     getLatestBlock() {
         return this.chain[this.chain.length - 1];
     }
 
-    createTempBlock2(timestamp,transaction,previousHash,index){
-        this.tempBlock=new Block(timestamp,transaction,previousHash,index);
+    createTempBlock2(timestamp, transaction, previousHash, index) {
+        this.tempBlock = new Block(timestamp, transaction, previousHash, index);
     }
 
     createTempBlock() {
-        let block = new Block(Date.now(), this.pendingTransactions.shift(), this.getLatestBlock().hash, this.getLatestBlock().index+1);
-       
+        let block = new Block(Date.now(), this.pendingTransactions.shift(), this.getLatestBlock().hash, this.getLatestBlock().index + 1);
+
         this.tempBlock = block;
     }
 
     appendingBlock() {
         this.count_state = true;
         this.verify = 0;
-        this.count =0;
+        this.count = 0;
         this.chain.push(this.tempBlock);
-        console.log('60 Blockchain.js : Chain : ',this.chain);
-        
+        console.log('60 Blockchain.js : Chain : ', this.chain);
+
     }
     // makeBAR(){
     //     let block = this.getLatestBlock();
@@ -74,9 +79,9 @@ module.exports = class Blockchain {
     //     BAR.Block.Index = block.index;
     //     return BAR;
     // }
-    appendingBlock_server_chain(msg){
+    appendingBlock_server_chain(msg) {
         this.chain.push(new Block(msg.Block.Timestamp, msg.Block.Transactions,
-        msg.Block.PreviousHash, msg.Block.Index));
+            msg.Block.PreviousHash, msg.Block.Index));
 
     }
 
@@ -90,27 +95,51 @@ module.exports = class Blockchain {
         var transaction_debtor = [];
         this.chain.find(ele => {
             var tt = ele.getTransaction();
-            if (tt.getCreditor() == userName) {
-                transaction_creditor.push(tt);
-            } else if (tt.getDebtor() == userName) {
-                transaction_debtor.push(tt);
+            var index = 0;
+            if (tt.creditor == userName) {
+                tt.dueDate = new Date(tt.dueDate).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' });
+                console.log('9393:', tt.dueDate);
+                if (tt.status == true) {
+                    for (var trans in transaction_creditor) {
+                        if (transaction_creditor[trans].dueDate == tt.dueDate && transaction_creditor[trans].money == tt.money) {
+                            transaction_creditor[trans] = tt;
+                            break;
+                        }
+                    }
+                }else{
+                    transaction_creditor.push(tt);
+                }
+
+                
+            } else if (tt.debtor == userName) {
+                tt.dueDate = new Date(tt.dueDate).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' });
+                if (tt.status == true) {
+                    for (var trans in transaction_debtor) {
+                        if (transaction_debtor[trans].dueDate == tt.dueDate && transaction_debtor[trans].money == tt.money) {
+                            transaction_debtor[trans] = tt;
+                            break;
+                        }
+                    }
+                }else{
+                    transaction_debtor.push(tt);
+                }
             }
         });
-        
-        return { 
-            creditor_list:transaction_creditor,
-            debtor_list:transaction_debtor,
+
+        return {
+            creditor_list: transaction_creditor,
+            debtor_list: transaction_debtor,
         }
 
     }
 
-    findDueTransaction(){
-        var result=[];
-        var date=new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'2-digit', day:'2-digit'});
-        this.chain.find(ele=>{
-            var tt=ele.getTransaction();
-            if(!tt.status){
-                if(tt.duedate==date){ //강제상환 대상!
+    findDueTransaction() {
+        var result = [];
+        var date = new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' });
+        this.chain.find(ele => {
+            var tt = ele.getTransaction();
+            if (!tt.status) {
+                if (tt.duedate == date) { //강제상환 대상!
                     result.push(tt);
                 }
             }
@@ -121,7 +150,7 @@ module.exports = class Blockchain {
 
     verifyBlock() {
         let previousblock = this.getLatestBlock();
-        console.log('66 Blockchain.js Hash Result Comparing : ', this.tempBlock.previousHash, ' , ',previousblock.calculateHash());
+        console.log('66 Blockchain.js Hash Result Comparing : ', this.tempBlock.previousHash, ' , ', previousblock.calculateHash());
         if (this.tempBlock.previousHash == previousblock.calculateHash()) {
             this.verify++;
             return true;
@@ -130,8 +159,8 @@ module.exports = class Blockchain {
             return false;
         }
     }
-    makeBRR(){
-        var BRR ={};
+    makeBRR() {
+        var BRR = {};
         BRR.Format = 'BRR';
         BRR.Data = {};
         BRR.Data.Status = 'Success';
@@ -144,7 +173,7 @@ module.exports = class Blockchain {
         if (Boolean == true) {
             var VBR = {};
             VBR.Format = 'VBR';
-            VBR.Data={};
+            VBR.Data = {};
             VBR.Data.Status = 'Valid';
             VBR.Data.Index = this.tempBlock.index;
             VBR.Data.Info = 'None';
@@ -152,16 +181,16 @@ module.exports = class Blockchain {
         else {
             var VBR = {};
             VBR.Format = 'VBR';
-            VBR.Data={};
+            VBR.Data = {};
             VBR.Data.Status = 'Non_Valid';
             VBR.Data.Info = 'None';
         }
 
         return VBR;
     }
-    makeBAR(){
+    makeBAR() {
         let block = this.getLatestBlock();
-        var BAR ={};
+        var BAR = {};
         BAR.Format = 'BAR';
         BAR.Data = {};
         BAR.Data.Status = 'Success';
@@ -169,6 +198,7 @@ module.exports = class Blockchain {
         BAR.Block.PreviousHash = block.previousHash;
         BAR.Block.Timestamp = block.timestamp;
         BAR.Block.Transactions = block.transactions;
+        console.log("180 : makeBAR : ", block.transactions);
         BAR.Block.Hash = block.hash;
         BAR.Block.Index = block.index;
         return BAR;
@@ -187,7 +217,7 @@ module.exports = class Blockchain {
 
     }
 
-    makeIAP(ip, port){
+    makeIAP(ip, port) {
         var IAP = {};
         IAP.Format = 'IAP';
         IAP.IP = ip;
@@ -195,9 +225,9 @@ module.exports = class Blockchain {
         return IAP;
     }
 
-    makeCIQ_Array(){
+    makeCIQ_Array() {
         var CIQ = {};
-        CIQ.Format ='CIQ';
+        CIQ.Format = 'CIQ';
         CIQ.Type = 'Array';
         CIQ.Array = [];
         CIQ.Array.push(/*something here*/);
@@ -205,9 +235,9 @@ module.exports = class Blockchain {
         return CIQ;
     }
 
-    makeCIQ_Object(){
+    makeCIQ_Object() {
         var CIQ = {};
-        CIQ.Format ='CIQ';
+        CIQ.Format = 'CIQ';
         CIQ.Type = 'Object';
         CIQ.Object = [];
         CIQ.Object.push(/*something here*/);
@@ -215,17 +245,17 @@ module.exports = class Blockchain {
         return CIQ;
     }
 
-    makeCIS(){
+    makeCIS() {
         var CIS = {};
         CIS.Format = 'CIS';
         CIS.Status = 'Success';
     }
-    makeACQ(){
-        var ACQ={
-            Format:'ACQ',
-            Data:{
-                chain:this.chain,
-                pendingTransactions:this.pendingTransactions,
+    makeACQ() {
+        var ACQ = {
+            Format: 'ACQ',
+            Data: {
+                chain: this.chain,
+                pendingTransactions: this.pendingTransactions,
             }
         };
         return ACQ;
@@ -242,13 +272,13 @@ module.exports = class Blockchain {
         return TRD;
     }
 
-    makeACS(boolean){
+    makeACS(boolean) {
         var ACS = {};
         ACS.Format = 'ACS';
-        if(boolean == true){
+        if (boolean == true) {
             ACS.Status = 'Succes';
         }
-        else{
+        else {
             ACS.Status = 'Fail';
         }
         return ACS;
@@ -287,25 +317,33 @@ module.exports = class Blockchain {
 
         return true;
     }
+
     //string으로 전달받은 chain을 다시 바꾸는중..
-    changeStringChain_to_BlockChain(arr){
+    changeStringChain_to_BlockChain(arr) {
         this.chain.pop(); //pop genesis block.
-        arr.forEach(ele=>{
-            this.chain.push(new Block(ele.timestamp,new Transaction(ele.transactions.creditor,ele.transactions.debtor,ele.transactions.money, ele.transactions.duedate,ele.transactions.rate, ele.transactions.status),ele.previousHash,ele.index));
+        arr.forEach(ele => {
+            this.chain.push(new Block(ele.timestamp, new Transaction(ele.transactions.creditor, ele.transactions.debtor, ele.transactions.money, new Date(ele.transactions.duedate), ele.transactions.rate, undefined, ele.transactions.status), ele.previousHash, ele.index));
         })
-        
+
     }
-    changeString_to_Transactions(arr){
-        arr.forEach(ele=>{
-            this.pendingTransactions.push(new Transaction(ele.creditor,ele.debtor,ele.money,ele.transactions.duedate,ele.transactions.rate, ele.transactions.status));
+
+    changeString_to_Transactions(arr) {
+        arr.forEach(ele => {
+            this.pendingTransactions.push(new Transaction(ele.creditor, ele.debtor, ele.money, ele.transactions.duedate, ele.transactions.rate, ele.transactions.rate_type, ele.transaction.status));
         })
     }
 
-    changeDate_to_DueDate(days){
+    changeDate_to_DueDate(days) {
         var t = new Date();
-        t.setDate(t.getDate()+days);
-        var options={year:'numeric',month:'2-digit', day:'2-digit'};
-        return k.toLocaleDateString('ko-KR',options);
+        t.setDate(t.getDate() + days);
+        var options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+        return t.toLocaleDateString('ko-KR', options);
+    }
+    
+    changeDate_to_LocaleDateString() {
+        var t = new Date();
+        var options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+        return t.toLocaleDateString('ko-KR', options);
     }
 
 

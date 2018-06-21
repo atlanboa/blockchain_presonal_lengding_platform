@@ -3,9 +3,11 @@ var router = express.Router();
 var ProductsModel = require('../models/ProductsModel');
 var CommentsModel = require('../models/CommentsModel');
 var UserModel =require('../models/UserModel');
+var ProductsModel = require('../models/ProductsModel');
 var csrf = require('csurf');
 var csrfProtection = csrf({ cookie: true });
 var loginRequired = require('../libs/loginRequired');
+
 
 var path = require('path');
 var uploadDir = path.join( __dirname , '../uploads' ); // 루트의 uploads위치에 저장한다.
@@ -158,16 +160,23 @@ router.post('/products/ajax_comment/delete', function(req, res){
     });
 });
 
-router.post('products/makeTransactions/:product',(req,res)=>{
-    var product=req.params.product;
-    var blockchain=requrie('../global.js').blockchain; //server blockchain
+router.get('/products/makeTransactions/:id',(req,dd)=>{
+    console.log("163 : print product : ", req.params.product);
+     
+    var blockchain=require('../node/global.js').blockchain; //server blockchain
     var Transaction=require('../node/Transaction.js');
+    console.log("168, id : ", req.param.id);
 
-    var newTransaction=new Transaction(product.username, req.user.username, product.price, blockchain.changeDate_to_DueDate(product.repaymentDate), product.interestrate, product.interDate);
-
-    blockchain.createTransaction(newTransaction);
-
+    ProductsModel.findOne({id:req.params.id},(err,res)=>{
+        console.log("171, admin.js , date : ",blockchain.changeDate_to_DueDate(res.repaymentDate));
+        var newTransaction = new Transaction(res.name, req.user.username, res.price, blockchain.changeDate_to_DueDate(res.repaymentDate), res.interestrate, undefined, false);
+        console.log("173 : transa : ", newTransaction);
+        blockchain.createTransaction(newTransaction);
+        dd.redirect('../../../accounts/myroom');
+    });
 });
+
+
 
 router.get('/download',(req,res)=>{
     res.download('uploads/client.exe');

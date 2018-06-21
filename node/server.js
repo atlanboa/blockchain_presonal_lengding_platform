@@ -86,82 +86,115 @@ let recv = function (message) {
             if ((global.blockchain.getLatestBlock().index + 1 == msg.Block.Index)
                 /*&& global.blockchain.count >= n*/) {
                 //console.log('87 : received BAR');
+                console.log("89 : msg : ", msg);
                 global.blockchain.appendingBlock_server_chain(msg);
                 global.blockchain.count = 0;
                 console.log(global.blockchain.chain);
+                console.log('92 : msg.Block.Transactions : ', msg.Block.Transactions);
                 var recent_tr = msg.Block.Transactions;
-                var query = {
-                    username: undefined, account_number: undefined, balance: undefined,
-                }
+                
 
                 if (!recent_tr.status) { //새로 생긴 transaction
-                    BankModel.findOne({ username: recent_tr.getCreditor() }, (err, res) => {
+                    console.log('98 : recent_tr.creditor : ',recent_tr.creditor);
+                    console.log('98 : recent_tr.debtor : ',recent_tr.debtor);
+                    console.log("99 : recent_tr.money type : ",typeof(recent_tr.money));
+                    BankModel.findOne({ username: recent_tr.creditor }, (err, res) => {
+                        
                         if (!res) console.log('99: node/server.js ERROR! CAN NOT FIND BANK MODEL!!!!');
-                        query.username = recent_tr.getCreditor();
-                        query.account_number = res.account_number;
-                        query.balance = res.balance - recent_tr.money;
-                        res.update({ username: recent_tr.getCreditor() }, { $set: query });
+                        let vbalance ;
+                        
+                        vbalance = res.balance - recent_tr.money;
+                        let query1 = {
+                            balance: vbalance,
+                        }
+                        
+                        BankModel.updateOne({ username:recent_tr.creditor },{ $set: query1 },(err)=>{
+                            if(err) console.log('node/server.js,133:',err);
+                        });
+                        
+                        
+
                     });
 
-                    BankModel.findOne({ username: recent_tr.getDebtor() }, (err, res) => {
-                        if (!res) console.log('108: node/server.js ERROR! CAN NOT FIND BANK MODEL!!!!');
-                        query.username = recent_tr.getDebtor();
-                        query.account_number = res.account_number;
-                        query.balance = res.balance + recent_tr.money;
-                        res.update({ username: recent_tr.getDebtor() }, { $set: query });
+                    BankModel.findOne({ username: recent_tr.debtor }, (err, res) => {
+                        
+                        if (!res) console.log('99: node/server.js ERROR! CAN NOT FIND BANK MODEL!!!!');
+                        let vbalance ;
+                        
+                        vbalance = res.balance + parseInt(recent_tr.money);
+                        let query1 = {
+                             balance: vbalance,
+                        }
+                        
+                        BankModel.updateOne({ username:recent_tr.debtor },{ $set: query1 },(err)=>{
+                            if(err) console.log('node/server.js,133:',err);
+                        });
+                        
+                       
+
                     });
+                    
+
+
                 }
                 else { //상환된 transaction
-                    var days=getDayDiff(getTodayDate(), dueDate);
-                    let Overdue;
-                    if(days == 30){
-                        UserModel.findOne({username : recent_tr.getDebtor()}, (err, res) =>{
-                            if(!res) console.log("119 : node/server.js ERROR! CAN NOT FIND User Model");
-                            Overdue = res.overdue + 1;
-                        });
-                        UserModel.updateOne({username : recent_tr.getDebtor()}, { $set:{overdue : Overdue}});
+                    var days=getDayDiff(getTodayDate(), recent_tr.dueDate);
+                    
+                    // if(days == 0){
+                    //     let Overdue;
                         
-                    }
+                    //     UserModel.findOne({username : recent_tr.debtor}, (err, res) =>{
+                    //         if(!res) console.log("119 : node/server.js ERROR! CAN NOT FIND User Model");
+                    //         Overdue = res.overdue + 1;
+                            
+                    //     });
+                    //     var query = {
+                    //         overdue: Overdue,
+                    //    };
+                    //     UserModel.updateOne({username : recent_tr.debtor}, { $set:query}, (err)=>{
+                    //         if(err) console.log('node/server.js,156',err);
+                    //     });
+                        
+                    // }
 
-                    BankModel.findOne({ username: recent_tr.getCreditor() }, (err, res) => {
+                    BankModel.findOne({ username: recent_tr.creditor }, (err, res) => {
                         if (!res) console.log('121: node/server.js ERROR! CAN NOT FIND BANK MODEL!!!!');
-                        query.username = recent_tr.getCreditor();
-                        query.account_number = res.account_number;
+                        let vbalance;
+                        vbalance = res.balance + parseInt(recent_tr.money) + (recent_tr.money * 1.1/*recent_tr.day_rate*/) * days;
+                        console.log("164, server.js vbalance : ", vbalance);
+                        let query = {
+                             balance: vbalance,
+                        }
 
-                        query.balance = res.balance + recent_tr.money + (recent_tr.money * recent_tr.day_rate) * days;
-
-                        res.update({ username: recent_tr.getCreditor() }, { $set: query });
+                        BankModel.updateOne({ username: recent_tr.creditor }, { $set: query }, (err)=>{
+                            if(err) console.log('node/server.js,171',err);
+                        });
 
                     })
-                    BankModel.findOne({ username: recent_tr.getDebtor() }, (err, res) => {
+                    BankModel.findOne({ username: recent_tr.debtor }, (err, res) => {
                         if (!res) console.log('128: node/server.js ERROR! CAN NOT FIND BANK MODEL!!!!');
-                        query.username = recent_tr.getDebtor();
-                        query.account_number = res.account_number;
-
-                        query.balance = res.balance - recent_tr.money - (recent_tr.money * recent_tr.day_rate) * days;
+                        let vbalance ;
+                        vbalance = res.balance - recent_tr.money - (recent_tr.money * 1.1/*recent_tr.day_rate*/) * days;
+                        console.log("178, server.js vbalance : ", vbalance);
+                        let query = {
+                             balance: vbalance,
+                        }
                         
                         if(query.balance<0){ //음수가 될 수 없으니까
                             //@todo 강제상환 부분
-                        query.balance = res.balance + recent_tr.money + (recent_tr.money * recent_tr.day_rate) * days;
+                       
 
-                        res.update({ username: recent_tr.getCreditor() }, { $set: query });
+                            BankModel.updateOne({ username: recent_tr.debtor }, { $set: query }, (err)=>{
+                                if(err) console.log('node/server.js,189',err);
+                            });
+                        }else{
+                            BankModel.updateOne({ username: recent_tr.debtor }, { $set: query }, (err)=>{
+                                if(err) console.log('node/server.js,189',err);
+                            });
                         }
 
                     })
-                    BankModel.findOne({ username: recent_tr.getDebtor() }, (err, res) => {
-                        if (!res) console.log('128: node/server.js ERROR! CAN NOT FIND BANK MODEL!!!!');
-                        query.username = recent_tr.getDebtor();
-                        query.account_number = res.account_number;
-
-                        query.balance = res.balance - recent_tr.money - (recent_tr.money * recent_tr.day_rate) * days;
-                        
-                        if(query.balance<0){ //음수가 될 수 없으니까
-                            //@todo 강제상환 부분
-                            query.balance=0;
-                        }
-
-                        res.update({ username: recent_tr.getDebtor() }, { $set: query });
-                    })
+                    
                 }
 
             }
@@ -202,49 +235,54 @@ module.exports.init = function () {
     console.log('Blockchain Server is opened!');
 
 
-    const interval = setInterval(function ping() {
-        wss.clients.forEach((ws) => {
-            if (ws.isAlive != true) {
-                //@todo 닫혔을 때 client[] 안에 있는거 find ip 찾아서 해당 data remove, 근데 어떻게 찾는지 모름... ㅠㅠㅠㅠ 
-                let index = client.findIndex(ele => {
-                    return (ele.IP == ws._socket.remoteAddress);
-                })
+    // const interval = setInterval(function ping() {
+    //     wss.clients.forEach((ws) => {
+    //         if (ws.isAlive != true) {
+    //             //@todo 닫혔을 때 client[] 안에 있는거 find ip 찾아서 해당 data remove, 근데 어떻게 찾는지 모름... ㅠㅠㅠㅠ 
+    //             let index = client.findIndex(ele => {
+    //                 return (ele.IP == ws._socket.remoteAddress);
+    //             })
 
-                console.log('104,', client[index], 'disconnected.');
+    //             console.log('104,', client[index], 'disconnected.');
 
-                if (index != 0) {
-                    client.slice(0, index - 1).join(client.slice(index + 1, client.length - 1));
-                } else {
-                    client.shift();
-                }
+    //             if (index != 0) {
+    //                 client.slice(0, index - 1).join(client.slice(index + 1, client.length - 1));
+    //             } else {
+    //                 client.shift();
+    //             }
 
-                return ws.terminate();
-            } else {
-                //console.log('114: all alive!');
-            }
-            ws.isAlive = false;
-            ws.ping(noop);
+    //             return ws.terminate();
+    //         } else {
+    //             //console.log('114: all alive!');
+    //         }
+    //         ws.isAlive = false;
+    //         ws.ping(noop);
 
-        });
-    }, 2000);
+    //     });
+    // }, 2000);
 
     const interval2 = setInterval(() => {
         if (global.blockchain.pendingTransactions.length >= 1 && client.length != 0) {
-            var random_int = Math.floor(Math.random() * client.length);
+            // var random_int = Math.floor(Math.random() * client.length);
+            var random_int = 0;
             var iter = wss.clients.values(); //type Set
 
             for (let i = 0; i < random_int - 1; i++) {
                 iter.next();
             }
-
-            iter.next().value.send(JSON.stringify({
+            var k={
                 Format: "CCR",
                 Data: {
                     "Status": "Confirm",
                     "Info": "None",
                 },
                 Transaction: global.blockchain.pendingTransactions.shift(),
-            }));
+            };
+            console.log("250, server.js : sendCCR : ",k.Transaction);
+            // k.Transaction.dueDate= 
+            // k.Transaction.dueDate.toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' });
+            iter.next().value.send(JSON.stringify(k));
+            
             console.log('126, Send CCR to', client[random_int].IP, ':', client[random_int].Port);
         }
     }, 3000);
@@ -258,20 +296,6 @@ module.exports.init = function () {
                 console.log("overdue 5 users are restricted");
             }
         });
-        // UserModel.find({ overdue : 5}, function(err, users){
-        //     //users : Array
-        //     users.forEach(ele=>{
-        //         ele.update()
-        //         var rusermodel = new RestrictedUserModel({
-        //             username: ele.username,
-        //         });
-                
-        //     });
-            
-        // });
-        // UserModel.remove({ overdue : 5});
-        // @todo usermodel에서 채무자 overdue +1, 5번넘으면 remove,
-        // 강제거래 완료이므로 Transaction 만들고, 거래완료 true
 
 
         var result=global.blockchain.findDueTransaction();
@@ -284,11 +308,5 @@ module.exports.init = function () {
         
     },12*3600*1000);
 
-    //temp block
-    // setTimeout(() => {
-
-    //     global.blockchain.createTransaction(new Transaction('aa', 'bb', 10000));
-    //     console.log('132, Make new Transactions!');
-    // }, 5000);
 
 }

@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var UserModel = require('../models/UserModel');
+var VirtualBankModel = require('../models/VirtualBankModel');
 var passwordHash = require('../libs/passwordHash');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
@@ -117,11 +118,18 @@ router.get('/myroom', function(req,res){
     if(!req.isAuthenticated()){
         res.send('<script>alert("로그인이 필요한 서비스입니다.");function popup(){var url ="/accounts/login";var name = "popup";window.open(url,name,"width=300,height=280,toolbar=no,status=no,location=no,scrollbars=yes,menubar=no,resizable=yes,left=50,right=50");}popup();</script>');
     }else{
+        var balance;
         var blockchain=require('../node/global.js').blockchain;
         var object=blockchain.findTransaction(req.user.username);
+        console.log('account.js:122:',object);
+        console.log('122 : username print : ', req.user.username);
+        VirtualBankModel.findOne({ username : req.user.username}, (err, doc)=>{
+            if(!doc) console.log('123 : CAN NOT FIND USER BANK ACCOUNT');
+            balance = doc.balance;
+            console.log('125 : print balance : ',balance);
+            res.render('accounts/myroom',{user : req.user, balance : balance,object:object, date:new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'2-digit', day:'2-digit'})});
+        });
         
-        res.render('accounts/myroom',{user : req.user, object:object, date:new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'2-digit', day:'2-digit'})});
-
     }
 });
 
@@ -145,16 +153,28 @@ router.post('/charge/:id',function(req,res){
     });
 });
 
-router.post('/makeTransaction/:result',(req,res)=>{
-    var info=req.params.result;
+router.get('/makeTransaction/:data',(req,res)=>{
+    var info=req.params.data;
+    console.log("158, info, account.js : ", info);
+    var data = info.split('@')
     var blockchain=require('../node/global.js').blockchain;
-    var Transaction=requrie('../node/Transaction.js');
-
-    var k=new Transaction(info.creditor,info.debtor,info.money,info.dueDate,info.rate,info.rate_type);
+    var Transaction=require('../node/Transaction.js');
+    
+    var k=new Transaction(data[0],req.user.username,data[1], blockchain.changeDate_to_LocaleDateString(),'주',undefined);
     k.status=true;
+    console.log("164, 상환 transaction : ", k);
     blockchain.createTransaction(k);
+    res.redirect('../../../accounts/myroom');
 
 })
+
+router.get('/checkBlockchain',(req,res)=>{
+    //@todo 사이트에 체인 넘겨주기
+    var blockchain = require('../node/global.js');
+    var chain = blockchain.chain;
+    console.log("175, account.js : chain : ",chain);
+    res.render('accounts/checkBlockchain',{chain: chain});
+});
 
 
 module.exports = router;

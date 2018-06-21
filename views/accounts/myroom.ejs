@@ -42,10 +42,10 @@
                             <img src="/images/coin.png" width="20px">잔액 :
                         </td>
                         <td>
-                            <%=user.money%> 원
-                            <div align="right">
-                    <a href="" class="btn btn-default" onclick="popup();">잔액 충전</a>
-                </div>
+                            <%=balance%> 원
+                                <div align="right">
+                                    <a href="" class="btn btn-default" onclick="popup();">잔액 충전</a>
+                                </div>
                         </td>
                     </tr>
                 </table>
@@ -55,49 +55,64 @@
             My Feed
         </div>
         <div class="panel-body">
-            <h3> 빌려준 내역 </h3>
+            <h3> 빌려준 내역 </h3> <br/>
             <%if(object.creditor_list==''){%>
                 <h4>거래 기록이 없습니다.</h4>
                 <%}else{%>
+                    <%for(var result in object.creditor_list){%>
+                        <%if(result=="removeByValue"){
+                            break;
+                        }%>
                     <ul>
-                        <%for(var result in object.creditor_list){%>
-                            <li>
-                                <%=result%>
-                            </li>
+                        <li>채무자:<%=object.creditor_list[result].debtor%></li>
+                        <li>채무액:<%=object.creditor_list[result].money%></li>
+                        <li>만료일:<%=object.creditor_list[result].dueDate%></li>
                     </ul>
-                    <%} }%>
-                        </br>
-                        <h3> 빌린 내역 </h3>
-                        <%if(object.debtor_list==''){%>
-                            <h4>거래 기록이 없습니다.</h4>
+                    
+                    <%}
+                }%>
+                </br>
+                <h3> 빌린 내역 </h3> <br/>
+                <%if(object.debtor_list==''){%>
+                    <h4>거래 기록이 없습니다.</h4>
+                <%}else{%>
+                    <%for(var result in object.debtor_list){%>
+                        <%if(result=="removeByValue"){
+                            break;
+                        }%>
+                    <ul>
+                        <li>
+                            <li>
+                                채권자:<%=object.debtor_list[result].creditor%>
+                            </li>
+                            <li>빌린금액:<%=object.debtor_list[result].money%>
+                            </li>
+                            <li>만료일:<%=object.debtor_list[result].dueDate%>
+                            </li>
+                            <%if(object.debtor_list[result].status==true){%>
+                            <a class="btn" style="background-color:rgb(132, 134, 132);">상환완료</a>
+                            <%}else{
+                            if(date==result.dueDate){%>
+                                <a class="btn .btn-danger">강제상환</a>
                             <%}else{%>
-                                <ul>
-                                    <%for(var result in object.debtor_list){%>
-                                    <li>
-                                        <%=result%>
-                                        <%if(result.status==true){%>
-                                            <a class="btn" style="background-color:rgb(132, 134, 132);">상환완료</a>
-                                        <%}else{
-                                            if(date==result.dueDate){%>
-                                                <a class="btn .btn-danger">강제상환</a>
-                                            <%}else{%>
-                                                <a href="/makeTransaction/<%=result%>" class="btn" style="background-color:rgba(32,177,67,1)">상환하기</a>
-                                        <%}}%>
-                                    </li>
-                                </ul>
-                                <%} }%>
-                                    <div align="right">
-                                        <a href="/" class="btn btn-default">홈으로</a>
-                                    </div>
+                                <a href="/accounts/makeTransaction/<%=object.debtor_list[result].creditor%>@<%=object.debtor_list[result].money%>" class="btn" style="background-color:rgba(32,177,67,1)">상환하기</a>
+                            <%}}%>
+                        </li>
+                    </ul>
+                    <%}
+                }%>
+                    <div align="right">
+                        <a href="/" class="btn btn-default">홈으로</a>
+                    </div>
         </div>
     </div>
 
-<script type="text/javascript">
-    function popup() {
-        var url = "/accounts/charge/<%=user.id%>";
-        var name = "popup";
-        window.open(url, name, "width=300,height=280,toolbar=no,status=no,location=no,scrollbars=yes,menubar=no,resizable=yes,left=50,right=50");
-    }
+    <script type="text/javascript">
+        function popup() {
+            var url = "/accounts/charge/<%=user.id%>";
+            var name = "popup";
+            window.open(url, name, "width=300,height=280,toolbar=no,status=no,location=no,scrollbars=yes,menubar=no,resizable=yes,left=50,right=50");
+        }
 
-</script>
-<% include ../includes/footer.ejs %>
+    </script>
+    <% include ../includes/footer.ejs %>
